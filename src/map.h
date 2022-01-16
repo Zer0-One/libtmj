@@ -1,5 +1,5 @@
-#ifndef GAM_MAP
-#define GAM_MAP
+#ifndef LIBTMX_MAP
+#define LIBTMX_MAP
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -8,19 +8,20 @@
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#json-map-format
  */
-struct map{
+typedef struct Map {
     bool infinite;
 
-    char* backgroundcolor;
+    char* backgroundcolor; // Optional
     char* orientation;
-    char* renderorder;
-    char* staggeraxis;
-    char* staggerindex;
+    char* renderorder; // Orthogonal maps only
+    char* staggeraxis; // Staggered/hexagonal maps only
+    char* staggerindex; // Staggered/hexagonal maps only
     char* tiledversion;
     char* type;
 
+    int compressionlevel;
     int height;
-    int hexsidelength;
+    int hexsidelength; // Hexagonal maps only
     int nextlayerid;
     int nextobjectid;
     int tileheight;
@@ -30,28 +31,35 @@ struct map{
     double version;
 
     size_t layer_count;
-    struct layer* layers;
+    Layer* layers;
 
     size_t property_count;
-    struct property* properties;
+    Property* properties;
 
     size_t tileset_count;
-    struct tileset** tilesets;
-};
+    Tileset* tilesets;
+} Map;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#layer
  */
-struct layer{
+typedef struct Layer {
     bool visible;
 
-    char* compression;
-    char* draworder;
-    char* encoding;
-    char* image;
+    char* compression; // tilelayer only
+    char* draworder; // objectgroup only
+    char* encoding; // tilelayer only
+    char* image; // imagelayer only
     char* name;
-    char* transparentcolor;
+    char* tintcolor; // Optional
+    char* transparentcolor; // Optional, imagelayer only
     char* type;
+
+    size_t data_count;
+    union{
+        unsigned int* data_uint;
+        char* data_str;
+    }; //tilelayer only
 
     int height;
     int id;
@@ -66,28 +74,22 @@ struct layer{
     double opacity;
 
     size_t chunk_count;
-    struct chunk* chunks;
-
-    size_t data_count;
-    union{
-        unsigned int** data_int;
-        char* data_str;
-    };
+    Chunk* chunks; // Optional, tilelayer only
 
     size_t layer_count;
-    struct layer* layers;
+    Layer* layers; // group only
 
     size_t object_count;
-    struct object* objects;
+    Object* objects; // objectgroup only
 
     size_t property_count;
-    struct property* properties;
-};
+    Property* properties;
+} Layer;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#chunk
  */
-struct chunk{
+typedef struct Chunk {
     int height;
     int width;
     int x;
@@ -95,15 +97,15 @@ struct chunk{
 
     size_t data_count;
     union{
-        unsigned int** data_int;
+        unsigned int* data_int;
         char* data_str;
     };
-};
+} Chunk;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#object
  */
-struct object{
+typedef struct Object {
     bool ellipse;
     bool point;
     bool visible;
@@ -126,23 +128,24 @@ struct object{
         size_t polyline_point_count;
     };
     union{
-        struct point* polygon;
-        struct point* polyline;
+        Point* polygon;
+        Point* polyline;
     };
 
     size_t property_count;
-    struct property* properties;
+    Property* properties;
 
-    struct text* text;
-};
+    Text* text;
+} Object;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#text
  */
-struct text{
+typedef struct {
     bool bold;
     bool italic;
     bool kerning;
+    bool strikeout;
     bool underline;
     bool wrap;
 
@@ -153,19 +156,21 @@ struct text{
     char* valign;
 
     int pixelsize;
-};
+} Text;
 
-// For sheets, tiles are numbered left-to-right, top-to-bottom
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#tileset
+ *
+ * Note that for sheets, tiles are numbered left-to-right, top-to-bottom
  */
-struct tileset{
-    char* backgroundcolor;
+typedef struct Tileset {
+    char* backgroundcolor; // Optional
     char* image;
     char* name;
+    char* objectalignment;
     char* source;
     char* tiledversion;
-    char* transparentcolor;
+    char* transparentcolor; // Optional
     char* type;
 
     int columns;
@@ -184,110 +189,119 @@ struct tileset{
     struct property* properties;
 
     size_t terrain_count;
-    struct terrain* terrains;
+    struct terrain* terrains; // Optional
 
     size_t tile_count;
-    struct tile* tiles;
+    struct tile* tiles; // Optional
 
     size_t wang_set_count;
     struct wang_set* wangsets;
 
-    struct grid* grid;
+    struct grid* grid; // Optional
 
-    struct tile_offset* tileoffset;
-};
+    struct tile_offset* tileoffset; // Optional
+} Tileset;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#grid
  */
-struct grid{
+typedef struct Grid {
     char* orientation;
 
     int height;
     int width;
-};
+} Grid;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#tile-offset
  */
-struct tile_offset{
+typedef struct TileOffset {
     int x;
     int y;
-};
+} TileOffset;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#tile-definition
  */
-struct tile{
-    char* image;
-    char* type;
+typedef struct Tile {
+    char* image; // Optional
+    char* type; // Optional
 
     int id;
     int imageheight;
     int imagewidth;
 
-    double probability;
+    double probability; // Optional
 
-    struct layer* layer;
-};
+    Layer* objectgroup; // Optional
+
+    size_t animation_count;
+    Frame* animation;
+
+    size_t terrain_count;
+    Terrain* terrain; // Optional
+
+    size_t property_count;
+    Properties* properties;
+} Tile;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#frame
  */
-struct frame{
+typedef struct Frame {
     int duration;
     int tileid;
-};
+} Frame;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#terrain
  */
-struct terrain{
+typedef struct Terrain {
     char* name;
 
     int tile;
 
     size_t property_count;
-    struct property* properties;
-};
+    Property* properties;
+} Terrain;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-set
  */
-struct wang_set{
+typedef struct WangSet {
     char* name;
 
     int tile;
 
     size_t cornercolor_count;
-    struct wang_color* cornercolors;
+    WangColor* cornercolors;
 
     size_t edgecolor_count;
-    struct wang_color* edgecolors;
+    WangColor* edgecolors;
 
     size_t property_count;
-    struct property* properties;
+    Property* properties;
 
     size_t wangtile_count;
-    struct wang_tile* wang_tiles;
-};
+    WangTile* wang_tiles;
+} WangSet;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-color
  */
-struct wang_color{
+typedef struct WangColor {
     char* color;
     char* name;
 
     int tile;
 
     double probability;
-};
+} WangColor;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-tile
  */
-struct wang_tile{
+typedef struct WangTile {
     bool dflip;
     bool hflip;
     bool vflip;
@@ -295,37 +309,34 @@ struct wang_tile{
     int tileid;
 
     unsigned char wangid[8];
-};
+} WangTile;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#object-template
  */
-struct object_template{
+typedef struct ObjectTemplate {
     char* type;
 
-    size_t tileset_count;
-    struct tileset* tilesets;
-
-    size_t object_count;
-    struct object* objects;
-};
+    Tileset* tileset; // Optional
+    Object* object;
+} ObjectTemplate;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#property
  */
-struct property{
+typedef struct Property {
     char* name;
     char* type;
     char* value;
-};
+} Property;
 
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#point
  */
-struct point{
+typedef struct {
     double x;
     double y;
-};
+} Point;
 
 
 
