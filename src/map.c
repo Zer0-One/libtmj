@@ -7,7 +7,7 @@
 #include "map.h"
 
 
-struct map* map_load(const char* path){
+Map* map_load(const char* path){
     json_error_t error;
     json_t* root = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
     if(root == NULL){
@@ -19,7 +19,7 @@ struct map* map_load(const char* path){
     json_t* layers = NULL; 
     json_t* tilesets = NULL;
 
-    struct map* map = calloc(1, sizeof(struct map));
+    Map* map = calloc(1, sizeof(Map));
     if(map == NULL){
         logmsg(LOG_ERR, "Could not load map '%s', the system is out of memory", path);
 
@@ -32,8 +32,8 @@ struct map* map_load(const char* path){
                               "{s:i, s:i, s:i, s:i, s:o, s:o, s:F}", 
                               "height", &map->height, 
                               "width", &map->width, 
-                              "tileheight", &map->tile_height, 
-                              "tilewidth", &map->tile_width, 
+                              "tileheight", &map->tileheight, 
+                              "tilewidth", &map->tilewidth, 
                               "layers", &layers,
                               "tilesets", &tilesets,
                               "version", &map->version
@@ -64,7 +64,7 @@ struct map* map_load(const char* path){
 
     map->layer_count = layer_count;
 
-    map->layers = calloc(layer_count, sizeof(struct layer));
+    map->layers = calloc(layer_count, sizeof(Layer));
     if(map->layers == NULL){
         logmsg(LOG_ERR, "Could not load layers for map '%s', the system is out of memory", path);
 
@@ -86,8 +86,8 @@ struct map* map_load(const char* path){
                               "width", &map->layers[index].width,
                               "opacity", &map->layers[index].opacity,
                               "type", &type,
-                              "offsetx", &map->layers[index].offset_x,
-                              "offsety", &map->layers[index].offset_y,
+                              "offsetx", &map->layers[index].offsetx,
+                              "offsety", &map->layers[index].offsety,
                               "data", &data,
                               "name", &map->layers[index].name
                             );
@@ -100,8 +100,8 @@ struct map* map_load(const char* path){
 
         logmsg(LOG_DEBUG, "Unpacked root object for layer '%s' in map '%s'", map->layers[index].name, path);
 
-        if(!json_is_array(data)){
-            logmsg(LOG_ERR, "Could not load layer for map '%s', layer data must be an array", path);
+        if(!json_is_array(data) && !json_is_string(data)){
+            logmsg(LOG_ERR, "Could not load layer for map '%s', layer data must be an array or a string", path);
 
             goto fail_layers;
         }
@@ -118,30 +118,39 @@ struct map* map_load(const char* path){
             goto fail_layers;
         }
 
-        map->layers[index].data = calloc(json_array_size(data), sizeof(int));
-        if(map->layers[index].data == NULL){
-            logmsg(LOG_ERR, "Could not load layer data for map '%s', the system is out of memory", path);
-
-            for(size_t i = 0; i <= index; i++){
-                free(map->layers[i].data);
-            }
-
-            goto fail_layers;
-        }
-
-        size_t data_index;
-        json_t* data_value;
-
-        json_array_foreach(data, data_index, data_value){
-            ret = json_unpack_ex(data_value, &error, 0, "i", &map->layers[index].data[data_index]);
-            if(ret == -1){
-                logmsg(LOG_ERR, "Could not load layer data for map '%s', %s", path, error.text);
+        if(json_is_array(data)){
+            map->layers[index].data_uint = calloc(json_array_size(data), sizeof(int));
+            if(map->layers[index].data_uint == NULL){
+                logmsg(LOG_ERR, "Could not load layer data for map '%s', the system is out of memory", path);
 
                 for(size_t i = 0; i <= index; i++){
-                    free(map->layers[i].data);
+                    free(map->layers[i].data_uint);
                 }
 
                 goto fail_layers;
+            }
+
+            size_t data_index;
+            json_t* data_value;
+
+            json_array_foreach(data, data_index, data_value){
+                ret = json_unpack_ex(data_value, &error, 0, "i", &map->layers[index].data_uint[data_index]);
+                if(ret == -1){
+                    logmsg(LOG_ERR, "Could not load layer data (array) for map '%s', %s", path, error.text);
+
+                    for(size_t i = 0; i <= index; i++){
+                        free(map->layers[i].data_uint);
+                    }
+
+                    goto fail_layers;
+                }
+            }
+        }
+        else{
+            ret = json_unpack_ex(data, &error, 0, "s", &map->layers[index].data_str);
+
+            if(ret == -1){
+                logmsg(LOG_ERR, "Could not load layer data (string) for map '%s', %s", path, error.text);
             }
         }
     }
@@ -163,7 +172,7 @@ struct map* map_load(const char* path){
 
     map->tileset_count = tileset_count;
 
-    map->tilesets = calloc(tileset_count, sizeof(struct tileset*));
+    map->tilesets = calloc(tileset_count, sizeof(Tileset*));
     if(map->tilesets == NULL){
         logmsg(LOG_ERR, "Could not allocate space for tilesets, the system is out of memory");
 
@@ -212,7 +221,7 @@ struct map* map_load(const char* path){
 
 fail_tilesets:
     for(size_t i = 0; i < map->layer_count; i++){
-        free(map->layers[i].data);
+        free(map->layers[i].data_uint);
     }
 
 fail_layers:
@@ -226,7 +235,7 @@ fail_map:
     return NULL;
 }
 
-struct tileset* tileset_load(const char* path){
+Tileset* tileset_load(const char* path){
     json_error_t error;
 
     json_t* root = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
@@ -236,7 +245,7 @@ struct tileset* tileset_load(const char* path){
         return NULL;
     }
 
-    struct tileset* ts = calloc(1, sizeof(struct tileset));
+    Tileset* ts = calloc(1, sizeof(Tileset));
     if(ts == NULL){
         logmsg(LOG_ERR, "Unable to load tileset '%s', the system is out of memory", path);
         
@@ -281,7 +290,7 @@ struct tileset* tileset_load(const char* path){
             goto fail_tileset;
         }
 
-        ts->tiles = calloc(tile_count, sizeof(struct tile));
+        ts->tiles = calloc(tile_count, sizeof(Tile));
         if(ts->tiles == NULL){
             logmsg(LOG_ERR, "Unable to unpack tileset '%s', the system is out of memory", path);
 
@@ -296,9 +305,9 @@ struct tileset* tileset_load(const char* path){
                                     0,
                                     "{s:i, s:s, s:i, s:i}",
                                     "id", &ts->tiles[index].id,
-                                    "image", &ts->tiles[index].path,
-                                    "imageheight", &ts->tiles[index].height_px,
-                                    "imagewidth", &ts->tiles[index].width_px
+                                    "image", &ts->tiles[index].image,
+                                    "imageheight", &ts->tiles[index].imageheight,
+                                    "imagewidth", &ts->tiles[index].imagewidth
                                 );
 
             if(ret == -1){
@@ -317,7 +326,7 @@ struct tileset* tileset_load(const char* path){
     else{
         ts->type = SHEET;
         
-        struct sheet* sheet = calloc(1, sizeof(struct sheet));
+        Sheet* sheet = calloc(1, sizeof(Sheet));
         if(sheet == NULL){
             logmsg(LOG_ERR, "Unable to load tileset '%s', the system is out of memory", path);
 

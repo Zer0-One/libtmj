@@ -28,7 +28,7 @@ To test, run `make test`.
 
     BSD 2-Clause License
 
-    Copyright (c) 2020, David Zero
+    Copyright (c) 2022, David Zero
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
