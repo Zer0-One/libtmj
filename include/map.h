@@ -4,15 +4,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <jansson.h>
+
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#property
  */
 typedef struct Property {
     char* name;
-    char* propertytype;
+    char* propertytype; //"When applicable", whatever the fuck that means
     char* type;
 
-    void* value;
+    json_t* value;
 } Property;
 
 /**
@@ -24,9 +26,10 @@ typedef struct Chunk {
     int x;
     int y;
 
+    bool data_is_str;
     size_t data_count;
     union{
-        unsigned int* data_int;
+        unsigned int* data_uint;
         char* data_str;
     };
 } Chunk;
@@ -113,6 +116,7 @@ typedef struct Layer {
     char* transparentcolor; // Optional, imagelayer only
     char* type;
 
+    bool data_is_str;
     size_t data_count;
     union{
         unsigned int* data_uint;
@@ -308,6 +312,14 @@ typedef struct Tileset {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#json-map-format
  */
 typedef struct Map {
+    // --- Special fields ---
+    bool is_json;
+    union{
+       json_t* root;
+       //xml_t root;
+    };
+    // ----------------------
+
     bool infinite;
 
     char* backgroundcolor; // Optional
@@ -331,7 +343,7 @@ typedef struct Map {
     double parallaxoriginx;
     double parallaxoriginy;
 
-    size_t layer_count;
+    // Layer tree
     Layer* layers;
 
     size_t property_count;
@@ -375,16 +387,18 @@ typedef struct Sheet{
 /**
  * Loads the Tiled map at the given path.
  *
- * \return On success, a pointer to a map. The map is dynamically-allocated,
- * and must be freed by the caller.
+ * \return On success, returns a pointer to a map. The map is
+ * dynamically-allocated, and must be freed by the caller. On failure, returns
+ * NULL.
  */
 Map* map_load(const char* path);
 
 /**
  * Loads the Tiled tileset at the given path.
  *
- * \return On success, a pointer to a tileset. The tileset is
- * dynamically-allocated, and must be freed by the caller.
+ * \return On success, returns a pointer to a tileset. The tileset is
+ * dynamically-allocated, and must be freed by the caller. On failure, returns
+ * NULL.
  */
 Tileset* tileset_load(const char* path);
 
@@ -392,11 +406,11 @@ Tileset* tileset_load(const char* path);
  * Frees the memory associated with the given map. This function will not free
  * any associated tilesets, those must be freed separately.
  */
-void map_destroy(Map* map);
+void map_free(Map* map);
 
 /**
  * Frees the memory associated with the given tileset.
  */
-void tileset_destroy(Tileset* tileset);
+void tileset_free(Tileset* tileset);
 
 #endif

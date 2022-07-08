@@ -1,10 +1,17 @@
 #misc
 *.swp
+example/
+bin/
+
+# scan-build
+map.plist/
 
 # CMake
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+Makefile
+CTestTestfile.cmake
 
 # Prerequisites
 *.d
