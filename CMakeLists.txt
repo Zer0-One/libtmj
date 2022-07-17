@@ -48,5 +48,5 @@ if(LIBTMX_TEST)
     target_link_libraries(unit_tests tmx Jansson::Jansson)
     set_target_properties(unit_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
-    add_test(NAME unit_tests COMMAND test/bin/unit_tests WORKING_DIRECTORY test/bin)
+    add_test(NAME unit_tests COMMAND unit_tests WORKING_DIRECTORY test/bin)
 endif()

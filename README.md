@@ -13,16 +13,16 @@ From the repository root, run `cmake . && make`
 
 Available cmake build options:
 
-Option           | Description
----------------- | -----------
-LIBTMX\_STATIC   | Builds a static library instead of a shared library.
-LIBTMX\_HARDENED | Enables hardening compilation and linking options.
-LIBTMX\_DOCS     | Also build documentation.
-LIBTMX\_TEST     | Build the test suite.
+Option              | Description
+------------------- | -----------
+BUILD\_SHARED\_LIBS | Builds a shared library instead of a static library.
+LIBTMX\_HARDENED    | Enables hardening compilation and linking options.
+LIBTMX\_DOCS        | Also build documentation.
+LIBTMX\_TEST        | Build the test suite.
 
 ## Testing
 
-To test, run `make test`.
+To enable the test suite, invoke cmake with `cmake -DLIBTMX_TEST=True .`. Then run the tests with `make test`.
 
 ## License
 
