@@ -383,9 +383,9 @@ fail_layer:
     return NULL;
 }
 
-Map* map_load_xml(const char* path){
-    return NULL;
-}
+//Map* map_load_xml(const char* path){
+//    return NULL;
+//}
 
 Map* map_load_json(const char* path){
     logmsg(LOG_DEBUG, "Loading JSON map file '%s'", path);
@@ -754,9 +754,9 @@ Map* map_load(const char* path){
         return map_load_json(path);
     }
     // XML map
-    else if(strcmp(ext, "tmx") == 0 || strcmp(ext, "xml") == 0){
-        return map_load_xml(path);
-    }
+    //else if(strcmp(ext, "tmx") == 0 || strcmp(ext, "xml") == 0){
+    //    return map_load_xml(path);
+    //}
     // Unknown extension
     else{
         logmsg(LOG_ERR, "Map filename has unknown extension, '%s'", ext);

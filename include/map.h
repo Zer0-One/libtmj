@@ -1,5 +1,5 @@
-#ifndef LIBTMX_MAP
-#define LIBTMX_MAP
+#ifndef LIBTMJ_MAP
+#define LIBTMJ_MAP
 
 #include <stdbool.h>
 #include <stdint.h>

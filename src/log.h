@@ -1,5 +1,5 @@
-#ifndef LIBTMX_LOG
-#define LIBTMX_LOG
+#ifndef LIBTMJ_LOG
+#define LIBTMJ_LOG
 
 #include <stdbool.h>
 #include <stdio.h>

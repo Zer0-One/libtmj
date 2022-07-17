@@ -1,11 +1,10 @@
-# libtmx
+# libtmj
 
-A library for loading Tiled maps in TMX and JSON format
+A library for loading Tiled maps in JSON format
 
 ## Dependencies
 
 - For JSON map support, `jansson`.
-- For XML map support, `minixml`.
 
 ## Building
 
@@ -16,13 +15,13 @@ Available cmake build options:
 Option              | Description
 ------------------- | -----------
 BUILD\_SHARED\_LIBS | Builds a shared library instead of a static library.
-LIBTMX\_HARDENED    | Enables hardening compilation and linking options.
-LIBTMX\_DOCS        | Also build documentation.
-LIBTMX\_TEST        | Build the test suite.
+LIBTMJ\_HARDENED    | Enables hardening compilation and linking options.
+LIBTMJ\_DOCS        | Also build documentation.
+LIBTMJ\_TEST        | Build the test suite.
 
 ## Testing
 
-To enable the test suite, invoke cmake with `cmake -DLIBTMX_TEST=True .`. Then run the tests with `make test`.
+To enable the test suite, invoke cmake with `cmake -DLIBTMJ_TEST=True .`. Then run the tests with `make test`.
 
 ## License
 
