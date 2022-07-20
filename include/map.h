@@ -70,9 +70,9 @@ typedef struct Object {
     bool point;
     bool visible;
 
+    char* class; // Optional
     char* name;
     char* template;
-    char* type;
 
     int gid;
     int id;
@@ -103,10 +103,11 @@ typedef struct Object {
  */
 typedef struct Layer {
     bool locked;
-    bool repeatx;
-    bool repeaty;
+    bool repeatx; // Imagelayer only
+    bool repeaty; // Imagelayer only
     bool visible;
 
+    char* class; // Optional
     char* compression; // tilelayer only
     char* draworder; // objectgroup only
     char* encoding; // tilelayer only
@@ -181,12 +182,16 @@ typedef struct Frame {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#tile-definition
  */
 typedef struct Tile {
+    char* class; // Optional
     char* image; // Optional
-    char* type; // Optional
 
     int id;
     int imageheight;
     int imagewidth;
+    int x;
+    int y;
+    int width;
+    int height;
 
     double probability; // Optional
 
@@ -215,6 +220,7 @@ typedef struct WangTile {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-color
  */
 typedef struct WangColor {
+    char* class;
     char* color;
     char* name;
 
@@ -230,6 +236,7 @@ typedef struct WangColor {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-set
  */
 typedef struct WangSet {
+    char* class; // Optional
     char* name;
     char* type;
 
@@ -270,11 +277,14 @@ typedef struct TileOffset {
  */
 typedef struct Tileset {
     char* backgroundcolor; // Optional
+    char* class; // Optional
+    char* fillmode;
     char* image;
     char* name;
     char* objectalignment;
     char* source;
     char* tiledversion;
+    char* tilerendersize;
     char* transparentcolor; // Optional
     char* type;
     char* version;
@@ -323,6 +333,7 @@ typedef struct Map {
     bool infinite;
 
     char* backgroundcolor; // Optional
+    char* class; // Optional
     char* orientation;
     char* renderorder; // Orthogonal maps only
     char* staggeraxis; // Staggered/hexagonal maps only

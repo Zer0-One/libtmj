@@ -4,12 +4,13 @@
 void setUp(){}
 void tearDown(){}
 
-void testtest(){
-    TEST_ASSERT(2 + 2 == 4);
+void test_map_load(){
+    Map* m = map_load("../../example/overworld.tmj");
+    TEST_ASSERT(m != NULL);
 }
 
 int main(){
     UNITY_BEGIN();
-    RUN_TEST(testtest);
+    RUN_TEST(test_map_load);
     return UNITY_END();
 }
