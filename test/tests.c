@@ -1,4 +1,4 @@
-#include "../include/map.h"
+#include "../include/tmj.h"
 #include "Unity/src/unity.h"
 
 void setUp(){}

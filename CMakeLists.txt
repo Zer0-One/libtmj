@@ -17,7 +17,7 @@ find_package(Jansson)
 add_library(tmj SHARED)
 target_sources(tmj
     PUBLIC
-        "include/map.h"
+        "include/tmj.h"
     PRIVATE
         "src/log.c"
         "src/map.c"

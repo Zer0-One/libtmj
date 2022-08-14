@@ -124,11 +124,11 @@ typedef struct Layer {
         char* data_str;
     }; //tilelayer only
 
-    int height;
+    int height; // tilelayer only
     int id;
     int startx;
     int starty;
-    int width;
+    int width; //tilelayer only
     int x;
     int y;
 
