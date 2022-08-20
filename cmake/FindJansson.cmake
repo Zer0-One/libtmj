@@ -10,7 +10,7 @@ find_path(Jansson_INCLUDE_DIR jansson.h
 	)
 
 find_library(Jansson_LIBRARY
-	NAMES libjansson.so
+	NAMES jansson
 	PATHS
 	  /usr/lib
 	  /usr/local/lib

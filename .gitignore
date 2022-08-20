@@ -2,6 +2,7 @@
 *.swp
 example/
 bin/
+todo.txt
 
 # scan-build
 map.plist/

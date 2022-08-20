@@ -14,7 +14,16 @@ typedef struct Property {
     char* propertytype; //"When applicable", whatever the fuck that means
     char* type;
 
-    json_t* value;
+    json_t* value; //To-Do: parse this out into an actual C value.
+    //union{
+    //    char* string_value;
+    //    int int_value;
+    //    double float_value;
+    //    bool bool_value;
+    //    char* color_value;
+    //    char* file_value;
+    //    int object_value;
+    //};
 } Property;
 
 /**
@@ -28,9 +37,10 @@ typedef struct Chunk {
 
     bool data_is_str;
     size_t data_count;
+
     union{
-        unsigned int* data_uint;
         char* data_str;
+        unsigned int* data_uint;
     };
 } Chunk;
 
@@ -62,10 +72,22 @@ typedef struct Text{
     int pixelsize;
 } Text;
 
+typedef enum OBJECT_TYPE{
+    OBJECT,
+    ELLIPSE,
+    RECTANGLE,
+    POINT,
+    POLYGON,
+    POLYLINE,
+    TEXT
+} object_type;
+
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#object
  */
 typedef struct Object {
+    object_type type;
+
     bool ellipse;
     bool point;
     bool visible;
@@ -82,6 +104,8 @@ typedef struct Object {
     double width;
     double x;
     double y;
+
+    bool is_polygon;
 
     union{
         size_t polygon_point_count;
@@ -322,13 +346,7 @@ typedef struct Tileset {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#json-map-format
  */
 typedef struct Map {
-    // --- Special fields ---
-    bool is_json;
-    union{
-       json_t* root;
-       //xml_t root;
-    };
-    // ----------------------
+    json_t* root;
 
     bool infinite;
 
@@ -361,7 +379,7 @@ typedef struct Map {
     Property* properties;
 
     size_t tileset_count;
-    Tileset** tilesets;
+    Tileset* tilesets;
 } Map;
 
 /**
@@ -375,41 +393,25 @@ typedef struct ObjectTemplate {
 } ObjectTemplate;
 
 
-enum layer_type{
-    TILE = 0,
-    OBJECT = 1
-};
-
-enum tileset_type{
-    INDIVIDUAL = 0,
-    SHEET = 1
-};
-
-
-typedef struct Sheet{
-    char* path;
-    int height_px;
-    int width_px;
-    int margin;
-    int spacing;
-    uint8_t* data;
-} Sheet;
-
 /**
- * Loads the Tiled map at the given path.
+ * Loads the Tiled map at the given path. The map object returned by this
+ * function must not be modified by the caller, or undefined behavior may
+ * result.
  *
  * \return On success, returns a pointer to a map. The map is
- * dynamically-allocated, and must be freed by the caller. On failure, returns
- * NULL.
+ * dynamically-allocated, and must be freed by the caller using map_free(). On
+ * failure, returns NULL.
  */
 Map* map_load(const char* path);
 
 /**
- * Loads the Tiled tileset at the given path.
+ * Loads the Tiled tileset at the given path. The tileset object returned by
+ * this function must not be modified by the caller, or undefined behavior may
+ * result.
  *
  * \return On success, returns a pointer to a tileset. The tileset is
- * dynamically-allocated, and must be freed by the caller. On failure, returns
- * NULL.
+ * dynamically-allocated, and must be freed by the caller using tileset_free().
+ * On failure, returns NULL.
  */
 Tileset* tileset_load(const char* path);
 

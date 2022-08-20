@@ -1,5 +1,0 @@
-- Configure CMake so that the logging features are compiled optionally
-    - Disable logging by default, since this is a library
-
-- Configure cmake to look for a minixml package, and otherwise try to build it
-  from a subproject, then link it statically

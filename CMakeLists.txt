@@ -8,13 +8,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 
 # Set options
-option(LIBTMJ_TEST "Enable unit tests" OFF)
+option(LIBTMJ_TEST "Enable unit tests" ON)
 option(BUILD_SHARED_LIBS "Build as a shared library" ON)
 # To enable debug builds, use -DCMAKE_BUILD_TYPE=Debug
 
 find_package(Jansson)
 
-add_library(tmj SHARED)
+add_library(tmj)
 target_sources(tmj
     PUBLIC
         "include/tmj.h"
@@ -35,7 +35,7 @@ set_target_properties(tmj PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 target_link_libraries(tmj Jansson::Jansson)
 
 # Set compiler/language options
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g3")
