@@ -4,6 +4,11 @@ example/
 bin/
 todo.txt
 
+# Doxygen
+docs/
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+
 # scan-build
 map.plist/
 

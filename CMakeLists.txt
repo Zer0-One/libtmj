@@ -9,6 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 
 # Set options
 option(LIBTMJ_TEST "Enable unit tests" ON)
+option(LIBTMJ_DOCS "Enable compiling documentation" ON)
 option(BUILD_SHARED_LIBS "Build as a shared library" ON)
 # To enable debug builds, use -DCMAKE_BUILD_TYPE=Debug
 
@@ -49,4 +50,11 @@ if(LIBTMJ_TEST)
     set_target_properties(unit_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
     add_test(NAME unit_tests COMMAND unit_tests WORKING_DIRECTORY test/bin)
+endif()
+
+# If documentation is enabled, compile docs
+if(LIBTMJ_DOCS)
+    find_package(Doxygen REQUIRED doxygen)
+
+    add_custom_command(TARGET tmj POST_BUILD COMMAND Doxygen::doxygen)
 endif()

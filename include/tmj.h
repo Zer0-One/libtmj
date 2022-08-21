@@ -7,6 +7,14 @@
 #include <jansson.h>
 
 /**
+ * @file
+ * @brief The libtmj API.
+ *
+ * The structures returned by the functions defined in this interface are not
+ * meant to be modified by the user. Use only the provided functions to do so.
+ */
+
+/**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#property
  */
 typedef struct Property {
@@ -175,6 +183,9 @@ typedef struct Layer {
     Property* properties;
 } Layer;
 
+/**
+ * https://doc.mapeditor.org/en/stable/reference/json-map-format/#transformations
+ */
 typedef struct Transformations {
     bool hflip;
     bool preferuntransformed;
@@ -394,35 +405,52 @@ typedef struct ObjectTemplate {
 
 
 /**
- * Loads the Tiled map at the given path. The map object returned by this
- * function must not be modified by the caller, or undefined behavior may
- * result.
+ * @defgroup tmj TMJ
  *
- * \return On success, returns a pointer to a map. The map is
+ * Public API for loading JSON-formatted Tiled maps and tilesets.
+ */
+
+/**
+ * @ingroup tmj
+ * Loads the Tiled map at the given path. The map object returned by this
+ * function must not be modified by the caller.
+ *
+ * @param path A relative or absolute filesystem path.
+ *
+ * @return On success, returns a pointer to a map. The map is
  * dynamically-allocated, and must be freed by the caller using map_free(). On
  * failure, returns NULL.
  */
 Map* map_load(const char* path);
 
 /**
+ * @ingroup tmj
  * Loads the Tiled tileset at the given path. The tileset object returned by
- * this function must not be modified by the caller, or undefined behavior may
- * result.
+ * this function must not be modified by the caller.
  *
- * \return On success, returns a pointer to a tileset. The tileset is
+ * @param path A relative or absolute filesystem path.
+ *
+ * @return On success, returns a pointer to a tileset. The tileset is
  * dynamically-allocated, and must be freed by the caller using tileset_free().
  * On failure, returns NULL.
  */
 Tileset* tileset_load(const char* path);
 
 /**
- * Frees the memory associated with the given map. This function will not free
- * any associated tilesets, those must be freed separately.
+ * @ingroup tmj
+ * Frees the memory associated with the given map. If the map was modified by
+ * the caller, this function may cause undefined behavior.
+ *
+ * @param map A map which was returned by a call to map_load().
  */
 void map_free(Map* map);
 
 /**
- * Frees the memory associated with the given tileset.
+ * @ingroup tmj
+ * Frees the memory associated with the given tileset. If the tileset was
+ * modified by the caller, this function may cause undefined behavior.
+ *
+ * @param tileset A tileset which was returned by a call to tileset_load().
  */
 void tileset_free(Tileset* tileset);
 
