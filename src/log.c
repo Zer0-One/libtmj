@@ -5,6 +5,10 @@
 #include <syslog.h>
 #include <time.h>
 
+/**
+ * @file
+ */
+
 #define DATE_BUFFER_SIZE 100
 
 bool debug = false;

@@ -384,6 +384,7 @@ typedef struct Map {
     double parallaxoriginy;
 
     // Layer tree
+    size_t layer_count;
     Layer* layers;
 
     size_t property_count;
@@ -412,16 +413,31 @@ typedef struct ObjectTemplate {
 
 /**
  * @ingroup tmj
- * Loads the Tiled map at the given path. The map object returned by this
- * function must not be modified by the caller.
+ * Loads the Tiled map from the file at the given path. The map object returned
+ * by this function must not be modified by the caller.
  *
  * @param path A relative or absolute filesystem path.
+ * @param check_extension If true, validates that the file extension equals ".tmj" or ".json".
  *
  * @return On success, returns a pointer to a map. The map is
  * dynamically-allocated, and must be freed by the caller using map_free(). On
  * failure, returns NULL.
  */
-Map* map_load(const char* path);
+Map* map_load_file(const char* path, bool check_extension);
+
+/**
+ * @ingroup tmj
+ * Loads the Tiled map from the given JSON object string. The map object
+ * returned by this function must not be modified by the caller.
+ *
+ * @param map A JSON string containing a Tiled map object.
+ *
+ * @return On success, returns a pointer to a map. The map is
+ * dynamically-allocated, and must be freed by the caller using map_free(). On
+ * failure, returns NULL.
+ */
+
+Map* map_load(const char* map);
 
 /**
  * @ingroup tmj
@@ -429,12 +445,26 @@ Map* map_load(const char* path);
  * this function must not be modified by the caller.
  *
  * @param path A relative or absolute filesystem path.
+ * @param check_extension If true, validates that the file extension equals ".tsj" or ".json".
  *
  * @return On success, returns a pointer to a tileset. The tileset is
  * dynamically-allocated, and must be freed by the caller using tileset_free().
  * On failure, returns NULL.
  */
-Tileset* tileset_load(const char* path);
+Tileset* tileset_load_file(const char* path, bool check_extension);
+
+/**
+ * @ingroup tmj
+ * Loads the Tiled tileset from the given JSON object string. The tileset
+ * object returned by this function must not be modified by the caller.
+ *
+ * @param path A JSON string containing a Tiled tileset object.
+ *
+ * @return On success, returns a pointer to a tileset. The tileset is
+ * dynamically-allocated, and must be freed by the caller using tileset_free().
+ * On failure, returns NULL.
+ */
+Tileset* tileset_load(const char* tileset);
 
 /**
  * @ingroup tmj
@@ -453,5 +483,28 @@ void map_free(Map* map);
  * @param tileset A tileset which was returned by a call to tileset_load().
  */
 void tileset_free(Tileset* tileset);
+
+
+/**
+ * @defgroup util Util
+ *
+ * Helper functions.
+ */
+
+/**
+ * @ingroup util
+ * Decodes layer data from a Tiled map layer.
+ *
+ * @param data The value of the "data" field from a Layer.
+ * @param encoding The value of the "encoding" field from a Layer.
+ * @param compression The value of the "compression" field from a Layer.
+ * @param[out] size The size of the resultant integer array.
+ *
+ * @return On Success, returns a dynamically-allocated array of global tile
+ * IDs. This array must be freed by the caller. See
+ * https://doc.mapeditor.org/en/stable/reference/global-tile-ids/ for more
+ * information. On failure, returns NULL.
+ */
+uint32_t* decode_layer(const char* data, const char* encoding, const char* compression, size_t** size); 
 
 #endif

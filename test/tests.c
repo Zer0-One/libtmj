@@ -5,7 +5,7 @@ void setUp(){}
 void tearDown(){}
 
 void test_map_load(){
-    Map* m = map_load("../../example/overworld.tmj");
+    Map* m = map_load_file("../../example/overworld.tmj", true);
     TEST_ASSERT(m != NULL);
 }
 
