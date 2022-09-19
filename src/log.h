@@ -8,7 +8,7 @@
 /**
  * @file
  *
- * @defgroup logging
+ * @defgroup logging Logging
  *
  * Private logging API.
  */

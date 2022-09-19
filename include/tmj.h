@@ -458,7 +458,7 @@ Tileset* tileset_load_file(const char* path, bool check_extension);
  * Loads the Tiled tileset from the given JSON object string. The tileset
  * object returned by this function must not be modified by the caller.
  *
- * @param path A JSON string containing a Tiled tileset object.
+ * @param tileset A JSON string containing a Tiled tileset object.
  *
  * @return On success, returns a pointer to a tileset. The tileset is
  * dynamically-allocated, and must be freed by the caller using tileset_free().
@@ -495,7 +495,7 @@ void tileset_free(Tileset* tileset);
  * @ingroup util
  * Decodes layer data from a Tiled map layer.
  *
- * @param data The value of the "data" field from a Layer.
+ * @param data The value of the "data_str" field from a Layer.
  * @param encoding The value of the "encoding" field from a Layer.
  * @param compression The value of the "compression" field from a Layer.
  * @param[out] size The size of the resultant integer array.
@@ -505,6 +505,6 @@ void tileset_free(Tileset* tileset);
  * https://doc.mapeditor.org/en/stable/reference/global-tile-ids/ for more
  * information. On failure, returns NULL.
  */
-uint32_t* decode_layer(const char* data, const char* encoding, const char* compression, size_t** size); 
+uint32_t* decode_layer(const char* data, const char* encoding, const char* compression, size_t* size); 
 
 #endif

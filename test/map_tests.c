@@ -9,6 +9,7 @@ void test_map_load(){
     TEST_ASSERT(m != NULL);
 }
 
+
 int main(){
     UNITY_BEGIN();
     RUN_TEST(test_map_load);

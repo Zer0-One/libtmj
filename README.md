@@ -19,6 +19,8 @@ Option              | Description
 ------------------- | -----------
 BUILD\_SHARED\_LIBS | Builds a shared library instead of a static library.
 LIBTMJ\_DOCS        | Also build documentation.
+LIBTMJ\_ZSTD        | Build zstd decompression routines.
+LIBTMJ\_ZLIB        | Build zlib and gzip decompression routines.
 LIBTMJ\_TEST        | Build the test suite.
 
 ## Testing

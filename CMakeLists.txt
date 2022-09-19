@@ -26,7 +26,6 @@ if(LIBTMJ_ZLIB)
     add_compile_definitions("LIBTMJ_ZLIB")
 endif()
 
-
 add_library(tmj)
 target_sources(tmj
     PUBLIC
@@ -67,17 +66,26 @@ set(CMAKE_C_FLAGS_DEBUG "-O0 -g3")
 if(LIBTMJ_TEST)
     enable_testing()
 
-    add_executable(unit_tests test/tests.c test/Unity/src/unity.c)
+    add_executable(map_tests test/map_tests.c test/Unity/src/unity.c)
+    add_executable(decode_tests test/decode_tests.c test/Unity/src/unity.c)
 
-    target_link_libraries(unit_tests tmj Jansson::Jansson)
+    target_link_libraries(map_tests tmj Jansson::Jansson)
+    target_link_libraries(decode_tests tmj Jansson::Jansson)
 
     if(LIBTMJ_ZSTD)
-        target_link_libraries(unit_tests tmj Zstd::Zstd)
+        target_link_libraries(map_tests tmj Zstd::Zstd)
+        target_link_libraries(decode_tests tmj Zstd::Zstd)
+    endif()
+    if(LIBTMJ_ZLIB)
+        target_link_libraries(map_tests tmj ZLIB::ZLIB)
+        target_link_libraries(decode_tests tmj ZLIB::ZLIB)
     endif()
 
-    set_target_properties(unit_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
+    set_target_properties(map_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
+    set_target_properties(decode_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
-    add_test(NAME unit_tests COMMAND unit_tests WORKING_DIRECTORY test/bin)
+    add_test(NAME map_tests COMMAND map_tests WORKING_DIRECTORY test/bin)
+    add_test(NAME decode_tests COMMAND decode_tests WORKING_DIRECTORY test/bin)
 endif()
 
 # If documentation is enabled, compile docs
