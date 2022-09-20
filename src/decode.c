@@ -8,7 +8,7 @@
 #ifdef LIBTMJ_ZSTD
 
 uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
-    logmsg(LOG_DEBUG, "Decode (zstd): Decompressing buffer of size %zd", data_size);
+    logmsg(LOG_DEBUG, "Decode (zstd): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
         logmsg(LOG_ERR, "Decode (zstd): Cannot decompress NULL buffer");
@@ -38,8 +38,12 @@ uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompre
         return NULL;
     }
 
-    if(ZSTD_decompress(ret, ret_size, data, data_size) != ret_size){
-        logmsg(LOG_ERR, "Decode (zstd): Decompressed size of data is different from size described in frame header");
+    size_t dsize = ZSTD_decompress(ret, ret_size, data, data_size);
+
+    logmsg(LOG_DEBUG, "Decode (zstd): Decompressed byte total: %zu", dsize);
+
+    if(ZSTD_isError(dsize)){
+        logmsg(LOG_ERR, "Decode (zstd): Decompression error: %s", ZSTD_getErrorName(dsize));
 
         free(ret);
 
@@ -56,7 +60,7 @@ uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompre
 #ifdef LIBTMJ_ZLIB
 
 uint8_t* zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
-    logmsg(LOG_DEBUG, "Decode (zlib): Decompressing buffer of size %zd", data_size);
+    logmsg(LOG_DEBUG, "Decode (zlib): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
         logmsg(LOG_ERR, "Decode (zlib): Cannot decompress NULL buffer");
@@ -264,7 +268,7 @@ char* b64_encode(uint8_t* data){
     return NULL;
 }
 
-uint8_t* b64_decode(const char* data){
+uint8_t* b64_decode(const char* data, size_t* decoded_size){
     if(data == NULL){
         logmsg(LOG_ERR, "Decode (b64): Unable to decode null input");
 
@@ -279,7 +283,8 @@ uint8_t* b64_decode(const char* data){
         return NULL;
     }
 
-    uint8_t* out = malloc(b64_decode_size(data));
+    size_t dSize = b64_decode_size(data);
+    uint8_t* out = malloc(dSize);
 
     if(out == NULL){
         logmsg(LOG_ERR, "Decode (b64): Unable to allocate output buffer, the system is out of memory");
@@ -316,6 +321,8 @@ uint8_t* b64_decode(const char* data){
             out[j+2] = p & 0xFF;
         }
     }
+
+    *decoded_size = dSize;
 
     return out;
 }

@@ -11,7 +11,7 @@
 
 #define DATE_BUFFER_SIZE 100
 
-bool debug = false;
+bool debug = true;
 bool foreground = true;
 
 void logprintf(int loglevel, char* msg, ...){

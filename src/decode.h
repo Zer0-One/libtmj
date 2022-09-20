@@ -53,11 +53,12 @@ uint8_t* zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompre
  *
  * @param data A valid base64 string. The given string must be null-terminated,
  * or this function will result in undefined behavior.
+ * @param[out] decoded_size The length of the returned decoded buffer.
  *
  * @return On success, returns a dynamically-allocated array of unsigned bytes.
  * The returned array must be freed by the caller.
  */
-uint8_t* b64_decode(const char* data);
+uint8_t* b64_decode(const char* data, size_t* decoded_size);
 
 
 #endif
