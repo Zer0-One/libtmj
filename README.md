@@ -2,9 +2,13 @@
 
 A library for loading Tiled maps in JSON format
 
+
 ## Dependencies
 
-- For JSON map support, `jansson`.
+- [`jansson`](https://github.com/akheron/jansson/)
+- [`zlib`](http://zlib.net/) (Optional, for zlib and gzip decompression support)
+- [`zstd`](https://github.com/facebook/zstd) (Optional, for zstd decompression support)
+
 
 ## Building
 

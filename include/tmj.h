@@ -486,6 +486,47 @@ void tileset_free(Tileset* tileset);
 
 
 /**
+ * @ingroup logging
+ */
+typedef enum LOG_PRIORITY{
+    DEBUG,
+    INFO,
+    WARNING,
+    ERR,
+    CRIT
+} log_priority;
+
+///**
+// * @ingroup logging
+// * The LogMessage struct is sent in logging callbacks to provide the caller
+// * with debugging and error information.
+// */
+//typedef struct LogMessage{
+//    log_priority priority;
+//
+//    /*-----------*/
+//    // These fields are only included when debugging is enabled for the callback
+//    int line;
+//    char* file;
+//    char* func;
+//    /*-----------*/
+//
+//    const char* msg;
+//} LogMessage;
+
+/**
+ * @ingroup logging
+ * Registers a callback function to handle logging events.
+ *
+ * @param debug If set to true, the given callback function will receive debug
+ * messages and information in addition to the higher-priority messages.
+ * @param callback A function that takes a LogMessage struct and returns
+ * nothing.
+ */
+void log_regcb(bool debug, void (*callback)(log_priority, const char*));
+
+
+/**
  * @defgroup util Util
  *
  * Helper functions.

@@ -3,7 +3,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <syslog.h>
+
+#include "../include/tmj.h"
 
 /**
  * @file
@@ -15,55 +16,47 @@
 
 /**
  * @ingroup logging
- * The logging facility to be used for messages being logged to the syslog.
+ * Statically-allocated memory to hold log messages which are passed to the
+ * logging callback.
  */
-#define LOG_FACILITY LOG_USER
+extern char logmsg_buf[];
 
 /**
  * @ingroup logging
- * If this variable is set to true, logs will include debug messages.
- */
-extern bool debug;
-
-/**
- * @ingroup logging
- * If this variable is set to true, logs will be written to stdout instead of
- * the syslog.
- */
-extern bool foreground;
-
-/**
- * @ingroup logging
- * Logs messages to the foreground. This function should not be used directly
- * under normal circumstances. Use the logmsg() macro instead.
+ * Processes log messages and passes them to the active logging callback, if
+ * there is one.
  *
- * @param loglevel One of the set of log priorities defined in <syslog.h>. Do
- *                 \b not include the logging facility. This function will use the logging
- *                 facility defined by LOG_FACILITY by default.
+ * @param priority One of the set of log priorities defined in the LOG_PRIORITY enum.
  * @param msg      A printf-style format string for the message to be logged
  * @param ...      Format string arguments for the previous argument. See printf() for detail.
  */
-void logprintf(int loglevel, char* msg, ...);
+void logmsg(log_priority priority, char* msg, ...);
 
-/**
- * @ingroup logging
- * This macro defines the logic for choosing whether to log messages to the
- * syslog, or to stdout. Use this macro wherever a message needs to be logged.
- *
- * The expected arguments are identical to that of logprintf().
- */
-#define logmsg(loglevel, ...) do{\
-    if(!debug){\
-        if(loglevel == LOG_DEBUG || loglevel == LOG_INFO || loglevel == LOG_NOTICE){\
-            break;\
-        }\
-    }\
-    if(!foreground){\
-        syslog(LOG_FACILITY | loglevel, __VA_ARGS__);\
-    }\
-    else{\
-        logprintf(loglevel, __VA_ARGS__);\
-    }\
-} while(0);
+///**
+// * @ingroup logging
+// * Processes log messages and passes them to the active logging callback, if
+// * there is one. This function should not be used directly under normal
+// * circumstances. Use the logmsg() macro instead, which uses the preprocessor
+// * to add line/file/function debugging information.
+// *
+// * @param loglevel One of the set of log priorities defined in the LOG_PRIORITY enum.
+// * @param line A source-code line number to report as part of the log message.
+// * @param file A source-code filename to report as part of the log message.
+// * @param func A function name to report as part of the log message.
+// * @param msg      A printf-style format string for the message to be logged
+// * @param ...      Format string arguments for the previous argument. See printf() for detail.
+// */
+//void log_event(int loglevel, int line, char* file, char* func, char* msg, ...);
+
+
+///**
+// * @ingroup logging
+// * This macro adds line, file, and function name information to logging calls
+// * to aid in debugging. Use this macro wherever a message needs to be logged.
+// *
+// * The expected arguments are identical to that of log_event(). See the
+// * documentation for log_event() for detail.
+// */
+//#define logmsg(loglevel, ...) log_event(loglevel, __LINE__, __FILE__, __func__, msg, __VA_ARGS__);
 
 #endif

@@ -1,59 +1,43 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <sys/time.h>
-#include <syslog.h>
-#include <time.h>
+
+#include "../include/tmj.h"
 
 /**
  * @file
  */
 
-#define DATE_BUFFER_SIZE 100
+#define LOGMSG_BUFSIZE 1024
 
-bool debug = true;
-bool foreground = true;
+bool log_debug = false;
+void (*log_callback)(log_priority, const char*) = NULL;
 
-void logprintf(int loglevel, char* msg, ...){
+char logmsg_buf[LOGMSG_BUFSIZE];
+
+void log_regcb(bool debug, void (*callback)(log_priority, const char*)){
+    log_debug = debug;
+    log_callback = callback;
+}
+
+void logmsg(log_priority priority, char* msg, ...){
+    // Don't bother logging if there's no callback registered
+    if(log_callback == NULL){
+        return;
+    }
+
+    // Don't log debug messages if we have debugging turned off
+    if(priority == DEBUG && !log_debug){
+        return;
+    }
+
     va_list args;
+
     va_start(args, msg);
 
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-
-    char date_buffer[DATE_BUFFER_SIZE];
-    struct tm* bd_time = localtime(&ts.tv_sec);
-    strftime(date_buffer, DATE_BUFFER_SIZE, "[%F %T]", bd_time);
-
-    if(loglevel == LOG_ALERT){
-        printf("%s Alert: ", date_buffer);
-    }
-    else if(loglevel == LOG_CRIT){
-        printf("%s Critical: ", date_buffer);
-    }
-    else if(loglevel == LOG_DEBUG){
-        printf("%s Debug: ", date_buffer);
-    }
-    else if(loglevel == LOG_EMERG){
-        printf("%s Emergency: ", date_buffer);
-    }
-    else if(loglevel == LOG_ERR){
-        printf("%s Error: ", date_buffer);
-    }
-    else if(loglevel == LOG_INFO){
-        printf("%s Info: ", date_buffer);
-    }
-    else if(loglevel == LOG_NOTICE){
-        printf("%s Notice: ", date_buffer);
-    }
-    else if(loglevel == LOG_WARNING){
-        printf("%s Warning: ", date_buffer);
-    }
-
-    vprintf(msg, args);
-    printf("\n");
+    vsnprintf(logmsg_buf, LOGMSG_BUFSIZE, msg, args);
 
     va_end(args);
 
-    fflush(NULL);
+    log_callback(priority, logmsg_buf);
 }

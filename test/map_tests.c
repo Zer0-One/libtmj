@@ -1,7 +1,14 @@
 #include "../include/tmj.h"
+
 #include "Unity/src/unity.h"
 
-void setUp(){}
+void log_cb(log_priority priority, const char* msg){
+    printf("TEST LOG: %s\n", msg);
+}
+
+void setUp(){
+    log_regcb(true, log_cb);
+}
 void tearDown(){}
 
 void test_map_load(){

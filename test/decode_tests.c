@@ -1,9 +1,17 @@
 #include <string.h>
 
+#include "../include/tmj.h"
 #include "../src/decode.h"
+
 #include "Unity/src/unity.h"
 
-void setUp(){}
+void log_cb(log_priority priority, const char* msg){
+    printf("TEST LOG: %s\n", msg);
+}
+
+void setUp(){
+    log_regcb(true, log_cb);
+}
 void tearDown(){}
 
 void test_b64_decode(){

@@ -17,7 +17,7 @@ Property* unpack_properties(json_t* properties){
     }
 
     if(!json_is_array(properties)){
-        logmsg(LOG_ERR, "'properties' must be an array");
+        logmsg(ERR, "'properties' must be an array");
 
         return NULL;
     }
@@ -29,7 +29,7 @@ Property* unpack_properties(json_t* properties){
     Property* ret = calloc(property_count, sizeof(Property));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to unpack properties, the system is out of memory");
+        logmsg(ERR, "Unable to unpack properties, the system is out of memory");
 
         return NULL;
     }
@@ -49,7 +49,7 @@ Property* unpack_properties(json_t* properties){
                                  );
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack properties, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack properties, %s at line %d column %d", error.text, error.line, error.column);
 
             free(ret);
 
@@ -73,13 +73,13 @@ void free_tilesets(Tileset* tilesets, size_t tileset_count){
 }
 
 Tileset* tileset_load_file(const char* path, bool check_extension){
-    logmsg(LOG_DEBUG, "Loading JSON tileset file '%s'", path);
+    logmsg(DEBUG, "Loading JSON tileset file '%s'", path);
 
     json_error_t error;
     json_t* tileset = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
 
     if(tileset == NULL){
-        logmsg(LOG_ERR, "Could not load tileset '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Could not load tileset '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
 
         return NULL;
     }
@@ -87,13 +87,13 @@ Tileset* tileset_load_file(const char* path, bool check_extension){
     Tileset* ret = calloc(1, sizeof(Tileset));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Tileset '%s': Unable to load tileset, the system is out of memory", path);
+        logmsg(ERR, "Tileset '%s': Unable to load tileset, the system is out of memory", path);
 
         return NULL;
     }
 
     if(unpack_tileset(tileset, &ret) == -1){
-        logmsg(LOG_ERR, "Tileset '%s': Unable to unpack tileset", path);
+        logmsg(ERR, "Tileset '%s': Unable to unpack tileset", path);
 
         free(ret);
 
@@ -116,7 +116,7 @@ Point* unpack_points(json_t* points){
     }
 
     if(!json_is_array(points)){
-        logmsg(LOG_ERR, "'points' must be an array");
+        logmsg(ERR, "'points' must be an array");
 
         return NULL;
     }
@@ -128,7 +128,7 @@ Point* unpack_points(json_t* points){
     Point* ret = calloc(point_count, sizeof(Point));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to unpack points, the system is out of memory");
+        logmsg(ERR, "Unable to unpack points, the system is out of memory");
 
         return NULL;
     }
@@ -146,7 +146,7 @@ Point* unpack_points(json_t* points){
                                  );
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack points, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack points, %s at line %d column %d", error.text, error.line, error.column);
 
             free(ret);
 
@@ -170,7 +170,7 @@ Text* unpack_text(json_t* text){
     Text* ret = calloc(1, sizeof(Text));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to unpack text, the system is out of memory");
+        logmsg(ERR, "Unable to unpack text, the system is out of memory");
 
         return NULL;
     }
@@ -197,7 +197,7 @@ Text* unpack_text(json_t* text){
                               "pixelsize", &ret->pixelsize
                              );
     if(unpk == -1){
-        logmsg(LOG_ERR, "Unable to unpack text, %s at line %d column %d", error.text, error.line, error.column);
+        logmsg(ERR, "Unable to unpack text, %s at line %d column %d", error.text, error.line, error.column);
 
         free(ret);
 
@@ -213,7 +213,7 @@ Object* unpack_objects(json_t* objects){
     }
 
     if(!json_is_array(objects)){
-        logmsg(LOG_ERR, "'objects' must be an array");
+        logmsg(ERR, "'objects' must be an array");
     }
 
     json_error_t error;
@@ -223,7 +223,7 @@ Object* unpack_objects(json_t* objects){
     Object* ret = calloc(object_count, sizeof(Object));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to unpack objects, the system is out of memory");
+        logmsg(ERR, "Unable to unpack objects, the system is out of memory");
 
         return NULL;
     }
@@ -258,7 +258,7 @@ Object* unpack_objects(json_t* objects){
                                  );
         
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
 
             return NULL;
         }
@@ -269,7 +269,7 @@ Object* unpack_objects(json_t* objects){
         unpk = json_unpack_ex(object, &error, 0, "{s?o}", "properties", &properties);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
 
             goto fail_properties;
         }
@@ -278,7 +278,7 @@ Object* unpack_objects(json_t* objects){
             ret[idx].properties = unpack_properties(properties);
 
             if(ret[idx].properties == NULL){
-                logmsg(LOG_ERR, "Unable to unpack object properties");
+                logmsg(ERR, "Unable to unpack object properties");
 
                 goto fail_properties;
             }
@@ -292,7 +292,7 @@ Object* unpack_objects(json_t* objects){
         unpk = json_unpack_ex(object, &error, 0, "{s?o}", "text", &text);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
 
             goto fail_text;
         }
@@ -301,7 +301,7 @@ Object* unpack_objects(json_t* objects){
             ret[idx].text = unpack_text(text);
 
             if(ret[idx].text == NULL){
-                logmsg(LOG_ERR, "Unable to unpack object text");
+                logmsg(ERR, "Unable to unpack object text");
 
                 goto fail_text;
             }
@@ -318,7 +318,7 @@ Object* unpack_objects(json_t* objects){
         unpk = json_unpack_ex(object, &error, 0, "{s?o}", "polygon", &polygon);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
 
             goto fail_polygon;
         }
@@ -342,7 +342,7 @@ Object* unpack_objects(json_t* objects){
         unpk = json_unpack_ex(object, &error, 0, "{s?o}", "polyline", &polyline);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
 
             goto fail_polyline;
         }
@@ -398,7 +398,7 @@ Chunk* unpack_chunks(json_t* chunks){
     }
 
     if(!json_is_array(chunks)){
-        logmsg(LOG_ERR, "Could not unpack layer chunks, 'chunks' must be an array");
+        logmsg(ERR, "Could not unpack layer chunks, 'chunks' must be an array");
 
         return NULL;
     }
@@ -410,7 +410,7 @@ Chunk* unpack_chunks(json_t* chunks){
     Chunk* ret = calloc(chunk_count, sizeof(Chunk));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to unpack chunks, the system is out of memory");
+        logmsg(ERR, "Unable to unpack chunks, the system is out of memory");
 
         return NULL;
     }
@@ -436,7 +436,7 @@ Chunk* unpack_chunks(json_t* chunks){
                                  );
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Unable to unpack chunk, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Unable to unpack chunk, %s at line %d column %d", error.text, error.line, error.column);
 
             goto fail_chunk;
         }
@@ -445,7 +445,7 @@ Chunk* unpack_chunks(json_t* chunks){
             unpk = json_unpack_ex(data, &error, 0, "s", &ret[idx].data_str);
 
             if(unpk == -1){
-                logmsg(LOG_ERR, "Unable to unpack chunk data, %s at line %d column %d", error.text, error.line, error.column);
+                logmsg(ERR, "Unable to unpack chunk data, %s at line %d column %d", error.text, error.line, error.column);
 
                 goto fail_chunk;
             }
@@ -458,7 +458,7 @@ Chunk* unpack_chunks(json_t* chunks){
             ret[idx].data_uint = calloc(datum_count, sizeof(unsigned int));
 
             if(ret[idx].data_uint == NULL){
-                logmsg(LOG_ERR, "Unable to unpack chunk data, the system is out memory");
+                logmsg(ERR, "Unable to unpack chunk data, the system is out memory");
 
                 goto fail_chunk;
             }
@@ -470,14 +470,14 @@ Chunk* unpack_chunks(json_t* chunks){
                 unpk = json_unpack_ex(datum, &error, 0, "i", &ret[idx].data_uint[idx2]);
 
                 if(unpk == -1){
-                    logmsg(LOG_ERR, "Unable to unpack chunk datum, %s at line %d column %d", error.text, error.line, error.column);
+                    logmsg(ERR, "Unable to unpack chunk datum, %s at line %d column %d", error.text, error.line, error.column);
 
                     goto fail_data;
                 }
             }
         }
         else{
-            logmsg(LOG_ERR, "Unable to unpack chunk, chunk data must be a string or an array of uint");
+            logmsg(ERR, "Unable to unpack chunk, chunk data must be a string or an array of uint");
 
             goto fail_chunk;
         }
@@ -514,7 +514,7 @@ void free_chunks(Chunk* chunks, size_t chunk_count){
  */
 Layer* unpack_layers(json_t* layers){
     if(!json_is_array(layers)){
-        logmsg(LOG_ERR, "Could not unpack layer, 'layers' must be an array");
+        logmsg(ERR, "Could not unpack layer, 'layers' must be an array");
 
         return NULL;
     }
@@ -522,7 +522,7 @@ Layer* unpack_layers(json_t* layers){
     size_t layer_count = json_array_size(layers);
 
     if(layer_count < 1){
-        logmsg(LOG_ERR, "Unable to load layers, 'layers' array must have at least one element");
+        logmsg(ERR, "Unable to load layers, 'layers' array must have at least one element");
 
         return NULL;
     }
@@ -530,7 +530,7 @@ Layer* unpack_layers(json_t* layers){
     Layer* ret = calloc(layer_count, sizeof(Layer));
 
     if(ret == NULL){
-        logmsg(LOG_ERR, "Unable to load layers, the system is out of memory");
+        logmsg(ERR, "Unable to load layers, the system is out of memory");
 
         return NULL;
     }
@@ -544,16 +544,16 @@ Layer* unpack_layers(json_t* layers){
         int unpk = json_unpack_ex(layer, &error, 0, "{s:i}", "id", &ret[idx].id);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Could not unpack layer ID, %s at line %d column %d", error.text, error.line, error.column);
+            logmsg(ERR, "Could not unpack layer ID, %s at line %d column %d", error.text, error.line, error.column);
         }
 
-        logmsg(LOG_DEBUG, "Loading layer %d", ret[idx].id);
+        logmsg(DEBUG, "Loading layer %d", ret[idx].id);
 
         // Unpack type
         unpk = json_unpack_ex(layer, &error, 0, "{s:s}", "type", &ret[idx].type);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+            logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
             goto fail_layer;
         }
@@ -585,7 +585,7 @@ Layer* unpack_layers(json_t* layers){
                              );
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+            logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
             goto fail_layer;
         }
@@ -606,7 +606,7 @@ Layer* unpack_layers(json_t* layers){
                                  );
 
             if(unpk == -1){
-                logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+                logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
                 goto fail_layer;
             }
@@ -626,7 +626,7 @@ Layer* unpack_layers(json_t* layers){
                                  );
 
             if(unpk == -1){
-                logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+                logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
                 goto fail_layer;
             }
@@ -640,7 +640,7 @@ Layer* unpack_layers(json_t* layers){
                                  );
 
             if(unpk == -1){
-                logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+                logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
                 goto fail_layer;
             }
@@ -653,7 +653,7 @@ Layer* unpack_layers(json_t* layers){
             unpk = json_unpack_ex(layer, &error, 0, "{s:o}", "data", &data);
 
             if(unpk == -1){
-                logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+                logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
                 goto fail_layer;
             }
@@ -664,7 +664,7 @@ Layer* unpack_layers(json_t* layers){
                 unpk = json_unpack_ex(layer, &error, 0, "{s:s}", "data", &ret[idx].data_str);
 
                 if(unpk == -1){
-                    logmsg(LOG_ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
+                    logmsg(ERR, "Could not unpack layer %d, %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
                     goto fail_layer;
                 }
@@ -677,7 +677,7 @@ Layer* unpack_layers(json_t* layers){
                 ret[idx].data_uint = calloc(ret[idx].data_count, sizeof(unsigned int));
 
                 if(ret[idx].data_uint == NULL){
-                    logmsg(LOG_ERR, "Layer %d: Unable to unpack data array, the system is out of memory", ret[idx].id);
+                    logmsg(ERR, "Layer %d: Unable to unpack data array, the system is out of memory", ret[idx].id);
 
                     goto fail_layer;
                 }
@@ -695,7 +695,7 @@ Layer* unpack_layers(json_t* layers){
                 }
             }
             else{
-                logmsg(LOG_ERR, "Layer %d: Layer data is neither a string nor an array", ret[idx].id);
+                logmsg(ERR, "Layer %d: Layer data is neither a string nor an array", ret[idx].id);
 
                 goto fail_layer;
             }
@@ -714,7 +714,7 @@ Layer* unpack_layers(json_t* layers){
             ret[idx].properties = unpack_properties(properties);
 
             if(ret[idx].properties == NULL){
-                logmsg(LOG_ERR, "Layer %d: Unable to unpack layer properties", ret[idx].id);
+                logmsg(ERR, "Layer %d: Unable to unpack layer properties", ret[idx].id);
 
                 goto fail_data;
             }
@@ -734,7 +734,7 @@ Layer* unpack_layers(json_t* layers){
                 ret[idx].chunks = unpack_chunks(chunks);
 
                 if(ret[idx].chunks == NULL){
-                    logmsg(LOG_ERR, "Layer %d: Unable to unpack layer chunks", ret[idx].id);
+                    logmsg(ERR, "Layer %d: Unable to unpack layer chunks", ret[idx].id);
 
                     goto fail_properties;
                 }
@@ -755,7 +755,7 @@ Layer* unpack_layers(json_t* layers){
                 ret[idx].objects = unpack_objects(objects);
 
                 if(ret[idx].objects == NULL){
-                    logmsg(LOG_ERR, "Layer %d: Unable to unpack layer objects", ret[idx].id);
+                    logmsg(ERR, "Layer %d: Unable to unpack layer objects", ret[idx].id);
 
                     goto fail_chunks;
                 }
@@ -776,7 +776,7 @@ Layer* unpack_layers(json_t* layers){
                 ret[idx].layers = unpack_layers(nested_layers);
 
                 if(ret[idx].layers == NULL){
-                    logmsg(LOG_ERR, "Layer %d: Failed to load nested layers", ret[idx].id);
+                    logmsg(ERR, "Layer %d: Failed to load nested layers", ret[idx].id);
 
                     goto fail_objects;
                 }
@@ -832,13 +832,13 @@ void free_layers(Layer* layers, size_t layer_count){
 }
 
 Map* map_load_json_file(const char* path){
-    logmsg(LOG_DEBUG, "Loading JSON map file '%s'", path);
+    logmsg(DEBUG, "Loading JSON map file '%s'", path);
 
     json_error_t error;
     json_t* root = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
 
     if(root == NULL){
-        logmsg(LOG_ERR, "Could not load map '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Could not load map '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
 
         return NULL;
     }
@@ -850,7 +850,7 @@ Map* map_load_json_file(const char* path){
     Map* map = calloc(1, sizeof(Map));
 
     if(map == NULL){
-        logmsg(LOG_ERR, "Could not load map '%s', the system is out of memory", path);
+        logmsg(ERR, "Could not load map '%s', the system is out of memory", path);
 
         goto fail_map;
     }
@@ -861,13 +861,13 @@ Map* map_load_json_file(const char* path){
     int unpk = json_unpack_ex(root, &error, 0, "{s:s}", "type", &map->type);
 
     if(unpk == -1){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack map type, %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Map '%s': Could not unpack map type, %s at line %d, column %d", path, error.text, error.line, error.column);
 
         goto fail_map;
     }
 
     if(strcmp(map->type, "map") != 0){
-        logmsg(LOG_ERR, "File at path '%s' is of type '%s' and is not a map file", path, map->type);
+        logmsg(ERR, "File at path '%s' is of type '%s' and is not a map file", path, map->type);
 
         goto fail_map;
     }
@@ -901,7 +901,7 @@ Map* map_load_json_file(const char* path){
                         );
 
     if(unpk == -1){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
 
         goto fail_map;
     }
@@ -917,7 +917,7 @@ Map* map_load_json_file(const char* path){
                             );
         
         if(unpk == -1){
-            logmsg(LOG_ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
+            logmsg(ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
 
             goto fail_map;
         }
@@ -927,7 +927,7 @@ Map* map_load_json_file(const char* path){
         unpk = json_unpack_ex(root, &error, 0, "{s:i}", "hexsidelength", &map->hexsidelength);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
+            logmsg(ERR, "Map '%s': Could not unpack map, %s at line %d, column %d", path, error.text, error.line, error.column);
 
             goto fail_map;
         }
@@ -937,7 +937,7 @@ Map* map_load_json_file(const char* path){
     unpk = json_unpack_ex(root, &error, 0, "{s?o}", "properties", &properties);
 
     if(unpk == -1){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack properties, %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Map '%s': Could not unpack properties, %s at line %d, column %d", path, error.text, error.line, error.column);
 
         goto fail_map;
     }
@@ -946,7 +946,7 @@ Map* map_load_json_file(const char* path){
         map->properties = unpack_properties(properties);
 
         if(map->properties == NULL){
-            logmsg(LOG_ERR, "Map '%s': Unable to unpack properties", path);
+            logmsg(ERR, "Map '%s': Unable to unpack properties", path);
 
             goto fail_map;
         }
@@ -956,7 +956,7 @@ Map* map_load_json_file(const char* path){
     unpk = json_unpack_ex(root, &error, 0, "{s:o}", "layers", &layers);
 
     if(unpk == -1){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack layers, %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Map '%s': Could not unpack layers, %s at line %d, column %d", path, error.text, error.line, error.column);
 
         goto fail_properties;
     }
@@ -964,7 +964,7 @@ Map* map_load_json_file(const char* path){
     map->layers = unpack_layers(layers);
 
     if(map->layers == NULL){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack layers", path);
+        logmsg(ERR, "Map '%s': Could not unpack layers", path);
 
         goto fail_properties;
     }
@@ -975,13 +975,13 @@ Map* map_load_json_file(const char* path){
     unpk = json_unpack_ex(root, &error, 0, "{s:o}", "tilesets", &tilesets);
 
     if(unpk == -1){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack tilesets, %s at line %d, column %d", path, error.text, error.line, error.column);
+        logmsg(ERR, "Map '%s': Could not unpack tilesets, %s at line %d, column %d", path, error.text, error.line, error.column);
 
         goto fail_layers;
     }
 
     if(!json_is_array(tilesets)){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack tilesets, tilesets must be an array", path);
+        logmsg(ERR, "Map '%s': Could not unpack tilesets, tilesets must be an array", path);
 
         goto fail_layers;
     }
@@ -991,7 +991,7 @@ Map* map_load_json_file(const char* path){
     map->tilesets = calloc(tileset_count, sizeof(Tileset));
 
     if(map->tilesets == NULL){
-        logmsg(LOG_ERR, "Map '%s': Could not unpack tilesets, the system is out of memory", path);
+        logmsg(ERR, "Map '%s': Could not unpack tilesets, the system is out of memory", path);
 
         goto fail_layers;
     }
@@ -1008,7 +1008,7 @@ Map* map_load_json_file(const char* path){
         unpk = json_unpack_ex(tileset, &error, 0, "{s?s, s?i}", "source", &source, "firstgid", &firstgid);
 
         if(unpk == -1){
-            logmsg(LOG_ERR, "Map '%s': Could not unpack tilesets, %s at line %d column %d", path, error.text, error.line, error.column);
+            logmsg(ERR, "Map '%s': Could not unpack tilesets, %s at line %d column %d", path, error.text, error.line, error.column);
 
             goto fail_tilesets;
         }
@@ -1035,7 +1035,7 @@ Map* map_load_json_file(const char* path){
             ts = json_load_file(tileset_path, JSON_REJECT_DUPLICATES, &error);
 
             if(ts == NULL){
-                logmsg(LOG_ERR, "Could not load map '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
+                logmsg(ERR, "Could not load map '%s', %s at line %d, column %d", path, error.text, error.line, error.column);
 
                 free(tileset_path);
 
@@ -1048,7 +1048,7 @@ Map* map_load_json_file(const char* path){
         }
 
         if(!unpack_tileset(ts, &map->tilesets)){
-            logmsg(LOG_ERR, "Map '%s': Could not unpack tileset at %s", path, tileset_path);
+            logmsg(ERR, "Map '%s': Could not unpack tileset at %s", path, tileset_path);
 
             free(tileset_path);
 
@@ -1084,14 +1084,14 @@ Map* map_load_file(const char* path, bool check_extension){
 
     if(check_extension){
         if(ext == NULL){
-            logmsg(LOG_ERR, "Map filename has no extension");
+            logmsg(ERR, "Map filename has no extension");
 
             return NULL;
         }
 
         if(strcmp(ext, ".tmj") != 0 && strcmp(ext, ".json") != 0){
-            logmsg(LOG_ERR, "Map filename has unknown extension, '%s'", ext);
-            logmsg(LOG_ERR, "Map filename must have '.tmj' or '.json' extension");
+            logmsg(ERR, "Map filename has unknown extension, '%s'", ext);
+            logmsg(ERR, "Map filename must have '.tmj' or '.json' extension");
 
             return NULL;
         }
