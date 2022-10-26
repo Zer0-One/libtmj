@@ -233,8 +233,7 @@ typedef struct Tile {
     size_t animation_count;
     Frame* animation;
 
-    size_t terrain_count;
-    Terrain* terrain; // Optional
+    int terrain[4]; // Optional
 
     size_t property_count;
     Property* properties;
@@ -311,6 +310,8 @@ typedef struct TileOffset {
  * Note that for sheets, tiles are numbered left-to-right, top-to-bottom
  */
 typedef struct Tileset {
+    json_t* root; // NULL for embedded tilesets; only set for external tilesets
+
     char* backgroundcolor; // Optional
     char* class; // Optional
     char* fillmode;
@@ -431,13 +432,16 @@ Map* map_load_file(const char* path, bool check_extension);
  * returned by this function must not be modified by the caller.
  *
  * @param map A JSON string containing a Tiled map object.
+ * @param name A name to use to reference this map in log messages.
+ * map_load_file() does not require this argument, because it uses the file
+ * path to identify the map in log message.
  *
  * @return On success, returns a pointer to a map. The map is
  * dynamically-allocated, and must be freed by the caller using map_free(). On
  * failure, returns NULL.
  */
 
-Map* map_load(const char* map);
+Map* map_load(const char* map, const char* name);
 
 /**
  * @ingroup tmj
@@ -520,7 +524,7 @@ typedef enum LOG_PRIORITY{
  *
  * @param debug If set to true, the given callback function will receive debug
  * messages and information in addition to the higher-priority messages.
- * @param callback A function that takes a LogMessage struct and returns
+ * @param callback A function that takes a LOG_PRIORITY and a char* and returns
  * nothing.
  */
 void log_regcb(bool debug, void (*callback)(log_priority, const char*));
