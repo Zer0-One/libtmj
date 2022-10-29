@@ -5,12 +5,28 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(log_priority priority, const char* msg){
-    printf("TEST LOG: %s\n", msg);
+void log_cb(tmj_log_priority priority, const char* msg){
+    switch(priority){
+        case DEBUG:
+            printf("DEBUG: %s\n", msg);
+            break;
+        case INFO:
+            printf("INFO: %s\n", msg);
+            break;
+        case WARNING:
+            printf("WARNING: %s\n", msg);
+            break;
+        case ERR:
+            printf("ERR: %s\n", msg);
+            break;
+        case CRIT:
+            printf("CRIT: %s\n", msg);
+            break;
+    }
 }
 
 void setUp(){
-    log_regcb(true, log_cb);
+    tmj_log_regcb(true, log_cb);
 }
 void tearDown(){}
 
@@ -20,8 +36,8 @@ void test_b64_decode(){
 
     size_t dSize;
 
-    TEST_ASSERT(strncmp(b64_decode(msg, &dSize), "This is a test string", 21) == 0);
-    TEST_ASSERT(strncmp(b64_decode(msg2, &dSize), "This is another test string!", 28) == 0);
+    TEST_ASSERT_EQUAL_STRING(b64_decode(msg, &dSize), "This is a test string");
+    TEST_ASSERT_EQUAL_STRING(b64_decode(msg2, &dSize), "This is another test string!");
 }
 
 void test_zlib_decode(){
@@ -35,10 +51,10 @@ void test_zlib_decode(){
     char* msg_zlib_decompressed = zlib_decompress(b64_decode(msg_zlib, &dSize), 37, &decompressed_size_zlib);
     char* msg_gzip_decompressed = zlib_decompress(b64_decode(msg_gzip, &dSize), 53, &decompressed_size_gzip);
 
-    TEST_ASSERT(strncmp(msg_zlib_decompressed, "This is a test string", 21) == 0);
-    TEST_ASSERT(strncmp(msg_gzip_decompressed, "This is a test string", 21) == 0);
-    TEST_ASSERT(decompressed_size_zlib == 21);
-    TEST_ASSERT(decompressed_size_gzip == 21);
+    TEST_ASSERT_EQUAL_STRING(msg_zlib_decompressed, "This is a test string");
+    TEST_ASSERT_EQUAL_STRING(msg_gzip_decompressed, "This is a test string");
+    TEST_ASSERT_EQUAL_INT(decompressed_size_zlib, 21);
+    TEST_ASSERT_EQUAL_INT(decompressed_size_gzip, 21);
 }
 
 void test_zstd_decode(){
@@ -51,7 +67,7 @@ void test_zstd_decode(){
 
     char* msg_decompressed = zstd_decompress(buf, dSize, &decompressed_size_zstd);
 
-    TEST_ASSERT(strncmp(msg_decompressed, "This is a test string", 21) == 0);
+    TEST_ASSERT_EQUAL_STRING(msg_decompressed, "This is a test string");
 }
 
 int main(){

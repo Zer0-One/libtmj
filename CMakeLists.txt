@@ -38,6 +38,13 @@ target_sources(tmj
         "src/util.c"
 )
 
+target_compile_definitions(tmj PUBLIC
+    LIBTMJ_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+    LIBTMJ_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+    LIBTMJ_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+    LIBTMJ_VERSION="${PROJECT_VERSION}"
+)
+
 # Set include directories
 target_include_directories(tmj PUBLIC include)
 target_include_directories(tmj PRIVATE src)
@@ -68,9 +75,11 @@ if(LIBTMJ_TEST)
 
     add_executable(map_tests test/map_tests.c test/Unity/src/unity.c)
     add_executable(decode_tests test/decode_tests.c test/Unity/src/unity.c)
+    #add_executable(util_tests test/util_tests.c test/Unity/src/unity.c)
 
     target_link_libraries(map_tests tmj Jansson::Jansson)
     target_link_libraries(decode_tests tmj Jansson::Jansson)
+    #target_link_libraries(util_tests tmj Jansson::Jansson)
 
     if(LIBTMJ_ZSTD)
         target_link_libraries(map_tests tmj Zstd::Zstd)
@@ -83,9 +92,11 @@ if(LIBTMJ_TEST)
 
     set_target_properties(map_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
     set_target_properties(decode_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
+    #set_target_properties(util_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
     add_test(NAME map_tests COMMAND map_tests WORKING_DIRECTORY test/bin)
     add_test(NAME decode_tests COMMAND decode_tests WORKING_DIRECTORY test/bin)
+    #add_test(NAME util_tests COMMAND util_tests WORKING_DIRECTORY test/bin)
 endif()
 
 # If documentation is enabled, compile docs

@@ -1,5 +1,5 @@
-#ifndef LIBTMJ_MAP
-#define LIBTMJ_MAP
+#ifndef LIBTMJ_API
+#define LIBTMJ_API
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -424,7 +424,7 @@ typedef struct ObjectTemplate {
  * dynamically-allocated, and must be freed by the caller using map_free(). On
  * failure, returns NULL.
  */
-Map* map_load_file(const char* path, bool check_extension);
+Map* tmj_map_loadf(const char* path, bool check_extension);
 
 /**
  * @ingroup tmj
@@ -441,7 +441,7 @@ Map* map_load_file(const char* path, bool check_extension);
  * failure, returns NULL.
  */
 
-Map* map_load(const char* map, const char* name);
+Map* tmj_map_load(const char* map, const char* name);
 
 /**
  * @ingroup tmj
@@ -455,7 +455,7 @@ Map* map_load(const char* map, const char* name);
  * dynamically-allocated, and must be freed by the caller using tileset_free().
  * On failure, returns NULL.
  */
-Tileset* tileset_load_file(const char* path, bool check_extension);
+Tileset* tmj_tileset_loadf(const char* path, bool check_extension);
 
 /**
  * @ingroup tmj
@@ -468,7 +468,7 @@ Tileset* tileset_load_file(const char* path, bool check_extension);
  * dynamically-allocated, and must be freed by the caller using tileset_free().
  * On failure, returns NULL.
  */
-Tileset* tileset_load(const char* tileset);
+Tileset* tmj_tileset_load(const char* tileset);
 
 /**
  * @ingroup tmj
@@ -477,7 +477,7 @@ Tileset* tileset_load(const char* tileset);
  *
  * @param map A map which was returned by a call to map_load().
  */
-void map_free(Map* map);
+void tmj_map_free(Map* map);
 
 /**
  * @ingroup tmj
@@ -486,19 +486,19 @@ void map_free(Map* map);
  *
  * @param tileset A tileset which was returned by a call to tileset_load().
  */
-void tileset_free(Tileset* tileset);
+void tmj_tileset_free(Tileset* tileset);
 
 
 /**
  * @ingroup logging
  */
-typedef enum LOG_PRIORITY{
+typedef enum TMJ_LOG_PRIORITY{
     DEBUG,
     INFO,
     WARNING,
     ERR,
     CRIT
-} log_priority;
+} tmj_log_priority;
 
 ///**
 // * @ingroup logging
@@ -527,7 +527,7 @@ typedef enum LOG_PRIORITY{
  * @param callback A function that takes a LOG_PRIORITY and a char* and returns
  * nothing.
  */
-void log_regcb(bool debug, void (*callback)(log_priority, const char*));
+void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
 
 
 /**
@@ -535,6 +535,41 @@ void log_regcb(bool debug, void (*callback)(log_priority, const char*));
  *
  * Helper functions.
  */
+
+/**
+ * @ingroup util
+ * The library major version.
+ *
+ * An unsigned integer representing the major component of the SemVer version
+ * of this library.
+ */
+extern unsigned int TMJ_VERSION_MAJOR;
+
+/**
+ * @ingroup util
+ * The library minor version.
+ *
+ * An unsigned integer representing the minor component of the SemVer version
+ * of this library.
+ */
+extern unsigned int TMJ_VERSION_MINOR;
+
+/**
+ * @ingroup util
+ * The library patch version.
+ *
+ * An unsigned integer representing the patch component of the SemVer version
+ * of this library.
+ */
+extern unsigned int TMJ_VERSION_PATCH;
+
+/**
+ * @ingroup util
+ * The full library version.
+ *
+ * A string containing the full SemVer version of this library.
+ */
+extern char* TMJ_VERSION;
 
 /**
  * @ingroup util
@@ -550,6 +585,6 @@ void log_regcb(bool debug, void (*callback)(log_priority, const char*));
  * https://doc.mapeditor.org/en/stable/reference/global-tile-ids/ for more
  * information. On failure, returns NULL.
  */
-uint32_t* decode_layer(const char* data, const char* encoding, const char* compression, size_t* size); 
+uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size); 
 
 #endif

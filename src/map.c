@@ -982,7 +982,7 @@ Tileset* tileset_load_file(const char* path, bool check_extension){
     return ret;
 }
 
-Tileset* tileset_load(const char* tileset){
+Tileset* tmj_tileset_load(const char* tileset){
     logmsg(DEBUG, "Loading JSON tileset from string");
 
     json_error_t error;
@@ -1591,7 +1591,7 @@ fail_map:
     return NULL;
 }
 
-Map* map_load_file(const char* path, bool check_extension){
+Map* tmj_map_loadf(const char* path, bool check_extension){
     char* ext = strrchr(path, '.');
 
     if(check_extension){
@@ -1623,7 +1623,7 @@ Map* map_load_file(const char* path, bool check_extension){
     return map_load_json(root, path);
 }
 
-Map* map_load(const char* map, const char* name){
+Map* tmj_map_load(const char* map, const char* name){
     json_error_t error;
 
     json_t* root = json_loads(map, JSON_REJECT_DUPLICATES, &error);

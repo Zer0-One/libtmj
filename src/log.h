@@ -30,7 +30,7 @@ extern char logmsg_buf[];
  * @param msg      A printf-style format string for the message to be logged
  * @param ...      Format string arguments for the previous argument. See printf() for detail.
  */
-void logmsg(log_priority priority, char* msg, ...);
+void logmsg(tmj_log_priority priority, char* msg, ...);
 
 ///**
 // * @ingroup logging

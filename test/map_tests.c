@@ -2,7 +2,7 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(log_priority priority, const char* msg){
+void log_cb(tmj_log_priority priority, const char* msg){
     switch(priority){
         case DEBUG:
             printf("DEBUG: %s\n", msg);
@@ -23,13 +23,13 @@ void log_cb(log_priority priority, const char* msg){
 }
 
 void setUp(){
-    log_regcb(true, log_cb);
+    tmj_log_regcb(true, log_cb);
 }
 
 void tearDown(){}
 
 void test_map_load(){
-    Map* m = map_load_file("../../example/overworld.tmj", true);
+    Map* m = tmj_map_loadf("../../example/overworld.tmj", true);
     TEST_ASSERT(m != NULL);
 }
 

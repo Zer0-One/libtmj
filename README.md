@@ -2,6 +2,9 @@
 
 A library for loading Tiled maps in JSON format
 
+Bear in mind that this library is currently in beta and not yet stable.  If you
+find bugs, or find that the library is missing an important feature, please
+file an issue.
 
 ## Dependencies
 
@@ -42,7 +45,7 @@ make test
 
     BSD 2-Clause License
 
-    Copyright (c) 2022, David Zero
+    Copyright (c) 2023, David Zero
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

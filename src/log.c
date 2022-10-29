@@ -11,16 +11,16 @@
 #define LOGMSG_BUFSIZE 1024
 
 bool log_debug = false;
-void (*log_callback)(log_priority, const char*) = NULL;
+void (*log_callback)(tmj_log_priority, const char*) = NULL;
 
 char logmsg_buf[LOGMSG_BUFSIZE];
 
-void log_regcb(bool debug, void (*callback)(log_priority, const char*)){
+void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*)){
     log_debug = debug;
     log_callback = callback;
 }
 
-void logmsg(log_priority priority, char* msg, ...){
+void logmsg(tmj_log_priority priority, char* msg, ...){
     // Don't bother logging if there's no callback registered
     if(log_callback == NULL){
         return;
