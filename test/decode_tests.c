@@ -40,6 +40,7 @@ void test_b64_decode(){
     TEST_ASSERT_EQUAL_STRING(b64_decode(msg2, &dSize), "This is another test string!");
 }
 
+#ifdef LIBTMJ_ZLIB
 void test_zlib_decode(){
     const char* msg_zlib = "eJwLycgsVgCiRIWS1OISheKSosy8dABRSQet";
     const char* msg_gzip = "H4sIAAAAAAAAAwvJyCxWAKJEhZLU4hKF4pKizLx0AG3zTmsVAAAA";
@@ -56,7 +57,9 @@ void test_zlib_decode(){
     TEST_ASSERT_EQUAL_INT(decompressed_size_zlib, 21);
     TEST_ASSERT_EQUAL_INT(decompressed_size_gzip, 21);
 }
+#endif
 
+#ifdef LIBTMJ_ZSTD
 void test_zstd_decode(){
     const char* msg = "KLUv/SQVqQAAVGhpcyBpcyBhIHRlc3Qgc3RyaW5nQBJZLg==";
 
@@ -69,11 +72,16 @@ void test_zstd_decode(){
 
     TEST_ASSERT_EQUAL_STRING(msg_decompressed, "This is a test string");
 }
+#endif
 
 int main(){
     UNITY_BEGIN();
     RUN_TEST(test_b64_decode);
+#ifdef LIBTMJ_ZLIB
     RUN_TEST(test_zlib_decode);
+#endif
+#ifdef LIBTMJ_ZSTD
     RUN_TEST(test_zstd_decode);
+#endif
     return UNITY_END();
 }
