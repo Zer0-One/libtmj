@@ -414,8 +414,9 @@ typedef struct ObjectTemplate {
 
 /**
  * @ingroup tmj
- * Loads the Tiled map from the file at the given path. The map object returned
- * by this function must not be modified by the caller.
+ * Loads the Tiled map from the file at the given path.
+ *
+ * The map object returned by this function must not be modified by the caller.
  *
  * @param path A relative or absolute filesystem path.
  * @param check_extension If true, validates that the file extension equals ".tmj" or ".json".
@@ -428,13 +429,14 @@ Map* tmj_map_loadf(const char* path, bool check_extension);
 
 /**
  * @ingroup tmj
- * Loads the Tiled map from the given JSON object string. The map object
- * returned by this function must not be modified by the caller.
+ * Loads the Tiled map from the given JSON object string.
+ *
+ * The map object returned by this function must not be modified by the caller.
  *
  * @param map A JSON string containing a Tiled map object.
  * @param name A name to use to reference this map in log messages.
- * map_load_file() does not require this argument, because it uses the file
- * path to identify the map in log message.
+ * tmj_map_loadf() does not require this argument, because it uses the file
+ * path to identify the map in log messages.
  *
  * @return On success, returns a pointer to a map. The map is
  * dynamically-allocated, and must be freed by the caller using map_free(). On
@@ -540,8 +542,8 @@ void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
  * @ingroup util
  * The library major version.
  *
- * An unsigned integer representing the major component of the SemVer version
- * of this library.
+ * An unsigned integer representing the major component of the SemVer 2.0
+ * version of this library.
  */
 extern unsigned int TMJ_VERSION_MAJOR;
 
@@ -549,8 +551,8 @@ extern unsigned int TMJ_VERSION_MAJOR;
  * @ingroup util
  * The library minor version.
  *
- * An unsigned integer representing the minor component of the SemVer version
- * of this library.
+ * An unsigned integer representing the minor component of the SemVer 2.0
+ * version of this library.
  */
 extern unsigned int TMJ_VERSION_MINOR;
 
@@ -558,8 +560,8 @@ extern unsigned int TMJ_VERSION_MINOR;
  * @ingroup util
  * The library patch version.
  *
- * An unsigned integer representing the patch component of the SemVer version
- * of this library.
+ * An unsigned integer representing the patch component of the SemVer 2.0
+ * version of this library.
  */
 extern unsigned int TMJ_VERSION_PATCH;
 

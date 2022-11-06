@@ -28,19 +28,15 @@ void setUp(){
 
 void tearDown(){}
 
-void test_map_loadf(){
-    Map* m = tmj_map_loadf("../../example/overworld.tmj", true);
-    TEST_ASSERT(m != NULL);
-}
-
-const char* map_string = "";
-
-void test_map_load(){
-    //Map* m = tmj_map_load();
+void test_version(){
+    TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_MAJOR, 0);
+    TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_MINOR, 1);
+    TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_PATCH, 7);
+    TEST_ASSERT_EQUAL_STRING(TMJ_VERSION, "0.1.0");
 }
 
 int main(){
     UNITY_BEGIN();
-    RUN_TEST(test_map_loadf);
+    RUN_TEST(test_version);
     return UNITY_END();
 }

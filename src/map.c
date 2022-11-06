@@ -920,24 +920,28 @@ fail_grid:
 void free_tilesets(Tileset* tilesets, size_t tileset_count){
     for(size_t i = 0; i < tileset_count; i++){
         // Free tiles
-        for(size_t j = 0; j < tilesets[i].tile_count; j++){
-            free(tilesets[i].tiles->animation);
-            if(tilesets[i].tiles->objectgroup != NULL){
-                free(tilesets[i].tiles->objectgroup->properties);
-                free_objects(tilesets[i].tiles->objectgroup->objects, tilesets[i].tiles->objectgroup->object_count);
+        if(tilesets[i].tiles){
+            for(size_t j = 0; j < tilesets[i].tile_count; j++){
+                free(tilesets[i].tiles->animation);
+                if(tilesets[i].tiles->objectgroup != NULL){
+                    free(tilesets[i].tiles->objectgroup->properties);
+                    free_objects(tilesets[i].tiles->objectgroup->objects, tilesets[i].tiles->objectgroup->object_count);
+                }
+                free(tilesets[i].tiles->objectgroup);
+                free(tilesets[i].tiles->properties);
             }
-            free(tilesets[i].tiles->objectgroup);
-            free(tilesets[i].tiles->properties);
-        }
 
-        free(tilesets[i].tiles);
+            free(tilesets[i].tiles);
+        }
 
         // Free terrains
-        for(size_t j = 0; j < tilesets[i].terrain_count; j++){
-            free(tilesets[i].terrains[j].properties);
-        }
+        if(tilesets[i].terrains){
+            for(size_t j = 0; j < tilesets[i].terrain_count; j++){
+                free(tilesets[i].terrains[j].properties);
+            }
 
-        free(tilesets[i].terrains);
+            free(tilesets[i].terrains);
+        }
 
         // Free everything else
         free(tilesets[i].properties);
@@ -949,8 +953,25 @@ void free_tilesets(Tileset* tilesets, size_t tileset_count){
     free(tilesets);
 }
 
-Tileset* tileset_load_file(const char* path, bool check_extension){
+Tileset* tmj_tileset_loadf(const char* path, bool check_extension){
     logmsg(DEBUG, "Loading JSON tileset file '%s'", path);
+
+    char* ext = strrchr(path, '.');
+
+    if(check_extension){
+        if(ext == NULL){
+            logmsg(ERR, "Tileset filename '%s' has no extension", path);
+
+            return NULL;
+        }
+
+        if(strcmp(ext, ".tsj") != 0 && strcmp(ext, ".json") != 0){
+            logmsg(ERR, "Tileset filename '%s' has unknown extension, '%s'", path, ext);
+            logmsg(ERR, "Tileset filename '%s' must have '.tsj' or '.json' extension to be loaded", path);
+
+            return NULL;
+        }
+    }
 
     json_error_t error;
     json_t* root = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
@@ -964,13 +985,13 @@ Tileset* tileset_load_file(const char* path, bool check_extension){
     Tileset* ret = calloc(1, sizeof(Tileset));
 
     if(ret == NULL){
-        logmsg(ERR, "Tileset '%s': Unable to load tileset, the system is out of memory", path);
+        logmsg(ERR, "Unable to load tileset[%s], the system is out of memory", path);
 
         return NULL;
     }
 
     if(unpack_tileset(root, ret) == -1){
-        logmsg(ERR, "Tileset '%s': Unable to unpack tileset", path);
+        logmsg(ERR, "Unable to unpack tileset[%s]", path);
 
         free(ret);
 
@@ -1340,10 +1361,6 @@ void free_layers(Layer* layers, size_t layer_count){
 Map* map_load_json(json_t* root, const char* path){
     json_error_t error;
 
-    json_t* layers = NULL; 
-    json_t* tilesets = NULL;
-    json_t* properties = NULL;
-
     Map* map = calloc(1, sizeof(Map));
 
     if(map == NULL){
@@ -1369,6 +1386,10 @@ Map* map_load_json(json_t* root, const char* path){
         goto fail_map;
     }
 
+    json_t* tilesets = NULL;
+    json_t* layers = NULL;
+    json_t* properties = NULL;
+
     // Unpack scalar values
     unpk = json_unpack_ex(root,
                          &error,
@@ -1378,6 +1399,7 @@ Map* map_load_json(json_t* root, const char* path){
                          "s?s, s?s, s:s, s:s, s:s, s:s,"
                          "s:i, s:i, s:i, s:i, s:i, s:i, s:i,"
                          "s?F, s?F,"
+                         "s:o, s:o, s?o"
                          "}",
                          "infinite", &map->infinite,
                          "backgroundcolor", &map->backgroundcolor,
@@ -1394,7 +1416,10 @@ Map* map_load_json(json_t* root, const char* path){
                          "tilewidth", &map->tilewidth,
                          "width", &map->width,
                          "parallaxoriginx", &map->parallaxoriginx,
-                         "parallaxoriginy", &map->parallaxoriginy
+                         "parallaxoriginy", &map->parallaxoriginy,
+                         "tilesets", &tilesets,
+                         "layers", &layers,
+                         "properties", &properties
                         );
 
     if(unpk == -1){
@@ -1431,14 +1456,6 @@ Map* map_load_json(json_t* root, const char* path){
     }
 
     // Unpack properties
-    unpk = json_unpack_ex(root, &error, 0, "{s?o}", "properties", &properties);
-
-    if(unpk == -1){
-        logmsg(ERR, "Unable to unpack map[%s]->properties, %s at line %d, column %d", path, error.text, error.line, error.column);
-
-        goto fail_map;
-    }
-
     if(properties != NULL){
         map->properties = unpack_properties(properties);
 
@@ -1450,14 +1467,6 @@ Map* map_load_json(json_t* root, const char* path){
     }
 
     // Unpack layers
-    unpk = json_unpack_ex(root, &error, 0, "{s:o}", "layers", &layers);
-
-    if(unpk == -1){
-        logmsg(ERR, "Unable to unpack map[%s]->layers, %s at line %d, column %d", path, error.text, error.line, error.column);
-
-        goto fail_properties;
-    }
-
     map->layers = unpack_layers(layers);
 
     if(map->layers == NULL){
@@ -1469,14 +1478,6 @@ Map* map_load_json(json_t* root, const char* path){
     map->layer_count = json_array_size(layers);
 
     // Unpack tilesets
-    unpk = json_unpack_ex(root, &error, 0, "{s:o}", "tilesets", &tilesets);
-
-    if(unpk == -1){
-        logmsg(ERR, "Unable to unpack map[%s]->tilesets, %s at line %d, column %d", path, error.text, error.line, error.column);
-
-        goto fail_layers;
-    }
-
     if(!json_is_array(tilesets)){
         logmsg(ERR, "Unable to unpack map[%s]->tilesets, tilesets must be an array of Tilesets", path);
 
@@ -1500,8 +1501,6 @@ Map* map_load_json(json_t* root, const char* path){
         char* source = NULL;
         int firstgid = 0;
 
-        char* tileset_path = NULL;
-
         unpk = json_unpack_ex(tileset, &error, 0, "{s?s, s?i}", "source", &source, "firstgid", &firstgid);
 
         if(unpk == -1){
@@ -1512,64 +1511,24 @@ Map* map_load_json(json_t* root, const char* path){
             goto fail_layers;
         }
 
-        // If there's an external tileset, this will point to it, otherwise it'll point to the embedded tileset
-        json_t* ts = tileset;
-
-        // The tileset is not included in the map object, load it from the source before unpacking
+        // The tileset is not included in the map object, save the firstgid and source
         if(source){
-            char* path_copy = strdup(path);
-
-            char* dir = dirname(path_copy);
-
-            tileset_path = calloc(1, strlen(dir) + strlen("/") + strlen(source));
-
-            if(tileset_path == NULL){
-                logmsg(ERR, "Unable to unpack map[%s]->tilesets, could not resolve tileset path '%s', the system is out of memory", path, source);
-
-                free(map->tilesets);
-
-                goto fail_layers;
-            }
-
-            char* to = tileset_path;
-
-            to = stpcpy(to, dir);
-            to = stpcpy(to, "/");
-            to = stpcpy(to, source);
-
-            free(path_copy);
-
-            ts = json_load_file(tileset_path, JSON_REJECT_DUPLICATES, &error);
-
-            if(ts == NULL){
-                logmsg(ERR, "Unable to load tileset '%s', %s at line %d, column %d", tileset_path, error.text, error.line, error.column);
-
-                free(map->tilesets);
-                free(tileset_path);
+            map->tilesets[idx].firstgid = firstgid;
+            map->tilesets[idx].source = source;
+        }
+        // The tileset is embedded in the map, unpack it
+        else{
+            if(unpack_tileset(tileset, &map->tilesets[idx]) != 0){
+                logmsg(ERR, "Unable to unpack map[%s]->tilesets, could not unpack embedded tileset", path);
 
                 goto fail_tilesets;
             }
-
-            // If the tileset was loaded from an external source, the firstgid and source won't be present there, because the way Tiled serializes is retarded
-            map->tilesets[idx].firstgid = firstgid;
-            map->tilesets[idx].source = source;
-
-            // Make sure to save the root object so we can decref() it later
-            map->tilesets[idx].root = ts;
-        }
-
-        if(unpack_tileset(ts, &map->tilesets[idx]) != 0){
-            logmsg(ERR, "Unable to unpack map[%s]->tilesets, could not unpack tileset at %s", path, tileset_path);
-
-            free(tileset_path);
-
-            goto fail_tilesets;
         }
 
         map->tileset_count = tileset_count;
-
-        free(tileset_path);
     }
+
+skip_tileset:
 
     return map;
 
