@@ -465,7 +465,7 @@ fail_grid:
 /**
  * Helper function for freeing tilesets embedded in maps
  */
-void free_tilesets(Tileset* tilesets, size_t tileset_count){
+void tilesets_free(Tileset* tilesets, size_t tileset_count){
     for(size_t i = 0; i < tileset_count; i++){
         // Free tiles
         if(tilesets[i].tiles){
@@ -582,4 +582,8 @@ Tileset* tmj_tileset_load(const char* tileset){
     ret->root = root;
 
     return ret;
+}
+
+void tmj_tileset_free(Tileset* tileset){
+    tilesets_free(tileset, 1);
 }

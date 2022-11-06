@@ -474,8 +474,10 @@ Tileset* tmj_tileset_load(const char* tileset);
 
 /**
  * @ingroup tmj
- * Frees the memory associated with the given map. If the map was modified by
- * the caller, this function may cause undefined behavior.
+ * Frees the memory associated with the given map.
+ *
+ * If the map was modified by the caller, this function may cause undefined
+ * behavior.
  *
  * @param map A map which was returned by a call to map_load().
  */

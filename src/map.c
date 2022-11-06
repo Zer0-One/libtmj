@@ -770,14 +770,14 @@ fail_layer:
  * undefined behavior if the layer objects were modified by the caller of
  * map_load().
  */
-void free_layers(Layer* layers, size_t layer_count){
+void layers_free(Layer* layers, size_t layer_count){
     for(size_t i = 0; i < layer_count; i++){
         free_objects(layers[i].objects, layers[i].object_count);
         free_chunks(layers[i].chunks, layers[i].chunk_count);
         free(layers[i].properties);
         free(layers[i].data_uint);
 
-        free_layers(layers[i].layers, layers[i].layer_count);
+        layers_free(layers[i].layers, layers[i].layer_count);
     }
 
     free(layers);
@@ -953,16 +953,13 @@ Map* map_load_json(json_t* root, const char* path){
         map->tileset_count = tileset_count;
     }
 
-skip_tileset:
-
     return map;
 
-
 fail_tilesets:
-    free_tilesets(map->tilesets, map->tileset_count);
+    tilesets_free(map->tilesets, map->tileset_count);
 
 fail_layers:
-    free_layers(map->layers, map->layer_count);
+    layers_free(map->layers, map->layer_count);
 
 fail_properties:
     free(map->properties);
@@ -1019,4 +1016,18 @@ Map* tmj_map_load(const char* map, const char* name){
     }
 
     return map_load_json(root, name);
+}
+
+void tmj_map_free(Map* map){
+    if(!map){
+        return;
+    }
+
+    tilesets_free(map->tilesets, map->tileset_count);
+    layers_free(map->layers, map->layer_count);
+    free(map->properties);
+
+    json_decref(map->root);
+
+    free(map);
 }

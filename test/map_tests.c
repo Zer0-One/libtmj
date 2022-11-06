@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "../include/tmj.h"
 
 #include "Unity/src/unity.h"
@@ -28,19 +30,50 @@ void setUp(){
 
 void tearDown(){}
 
+char* testmap_path = "../../example/overworld.tmj";
+size_t layer_count = 4;
+char* layer1_type = "tilelayer";
+
+Map* mf = NULL;
+Map* ms = NULL;
+
 void test_map_loadf(){
-    Map* m = tmj_map_loadf("../../example/overworld.tmj", true);
-    TEST_ASSERT(m != NULL);
+    mf = tmj_map_loadf(testmap_path, true);
+    TEST_ASSERT_NOT_NULL(mf);
+    TEST_ASSERT_EQUAL_size_t(mf->layer_count, 4);
+    TEST_ASSERT_EQUAL_STRING(mf->layers[0].type, layer1_type);
 }
 
-const char* map_string = "";
-
 void test_map_load(){
-    //Map* m = tmj_map_load();
+    FILE* f = fopen(testmap_path, "r");
+
+    fseek(f, 0, SEEK_END);
+    size_t fsize = ftell(f);
+    rewind(f);
+
+    char* s = calloc(1, fsize + 1);
+
+    TEST_ASSERT_EQUAL_size_t(fread(s, 1, fsize, f), fsize);
+    fclose(f);
+
+    ms = tmj_map_load(s, "overworld");
+
+    TEST_ASSERT_NOT_NULL(ms);
+    TEST_ASSERT_EQUAL_size_t(ms->layer_count, 4);
+    TEST_ASSERT_EQUAL_STRING(ms->layers[0].type, layer1_type);
+
+    free(s);
+}
+
+void test_map_free(){
+    tmj_map_free(mf);
+    tmj_map_free(ms);
 }
 
 int main(){
     UNITY_BEGIN();
     RUN_TEST(test_map_loadf);
+    RUN_TEST(test_map_load);
+    RUN_TEST(test_map_free);
     return UNITY_END();
 }
