@@ -31,9 +31,9 @@ target_sources(tmj
     PUBLIC
         "include/tmj.h"
     PRIVATE
-        "src/decode.h"
         "src/decode.c"
         "src/log.c"
+        "src/tileset.c"
         "src/map.c"
         "src/util.c"
 )
