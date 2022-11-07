@@ -1,0 +1,13 @@
+EXPORTS
+    tmj_map_loadf
+    tmj_map_load
+    tmj_tileset_loadf
+    tmj_tileset_load
+    tmj_map_free
+    tmj_tileset_free
+    tmj_log_regcb
+    TMJ_VERSION_MAJOR
+    TMJ_VERSION_MINOR
+    TMJ_VERSION_PATCH
+    TMJ_VERSION
+    tmj_decode_layer

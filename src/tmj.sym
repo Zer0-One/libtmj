@@ -1,0 +1,6 @@
+{
+    global:
+        tmj_*;
+        TMJ_*;
+    local: *;
+};

@@ -282,7 +282,7 @@ Object* unpack_objects(json_t* objects){
                 goto fail_polygon;
             }
 
-            ret[idx].polygon_point_count == json_array_size(polygon);
+            ret[idx].polygon_point_count = json_array_size(polygon);
 
             // No need to unpack a polyline if this object was a polygon
             continue;
@@ -306,7 +306,7 @@ Object* unpack_objects(json_t* objects){
                 goto fail_polyline;
             }
 
-            ret[idx].polyline_point_count == json_array_size(polyline);
+            ret[idx].polyline_point_count = json_array_size(polyline);
         }
     }
 
@@ -1031,3 +1031,4 @@ void tmj_map_free(Map* map){
 
     free(map);
 }
+

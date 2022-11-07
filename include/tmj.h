@@ -6,6 +6,10 @@
 
 #include <jansson.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @file
  * @brief The libtmj API.
@@ -547,7 +551,7 @@ void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
  * An unsigned integer representing the major component of the SemVer 2.0
  * version of this library.
  */
-extern unsigned int TMJ_VERSION_MAJOR;
+extern const unsigned int TMJ_VERSION_MAJOR;
 
 /**
  * @ingroup util
@@ -556,7 +560,7 @@ extern unsigned int TMJ_VERSION_MAJOR;
  * An unsigned integer representing the minor component of the SemVer 2.0
  * version of this library.
  */
-extern unsigned int TMJ_VERSION_MINOR;
+extern const unsigned int TMJ_VERSION_MINOR;
 
 /**
  * @ingroup util
@@ -565,7 +569,7 @@ extern unsigned int TMJ_VERSION_MINOR;
  * An unsigned integer representing the patch component of the SemVer 2.0
  * version of this library.
  */
-extern unsigned int TMJ_VERSION_PATCH;
+extern const unsigned int TMJ_VERSION_PATCH;
 
 /**
  * @ingroup util
@@ -573,7 +577,7 @@ extern unsigned int TMJ_VERSION_PATCH;
  *
  * A string containing the full SemVer version of this library.
  */
-extern char* TMJ_VERSION;
+extern const char* const TMJ_VERSION;
 
 /**
  * @ingroup util
@@ -590,5 +594,9 @@ extern char* TMJ_VERSION;
  * information. On failure, returns NULL.
  */
 uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size); 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

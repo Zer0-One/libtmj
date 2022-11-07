@@ -1,6 +1,7 @@
 #misc
 *.swp
 bin/
+example/
 todo.txt
 
 # Doxygen

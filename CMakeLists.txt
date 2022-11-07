@@ -36,6 +36,7 @@ target_sources(tmj
         "src/tileset.c"
         "src/map.c"
         "src/util.c"
+        "src/tmj.def"
 )
 
 target_compile_definitions(tmj PUBLIC
@@ -44,6 +45,15 @@ target_compile_definitions(tmj PUBLIC
     LIBTMJ_VERSION_PATCH=${PROJECT_VERSION_PATCH}
     LIBTMJ_VERSION="${PROJECT_VERSION}"
 )
+
+# Control symbol visibility
+# We need internal symbols for tests, so just export everything if we're building tests
+if(NOT LIBTMJ_TEST)
+    # Add symbol versions from SOVERSION
+    #get_target_property(TMJ_VERSION tmj VERSION)
+    #configure_file(src/tmj.sym.in src/tmj.sym)
+    target_link_options(tmj PRIVATE "LINKER:--version-script=src/tmj.sym")
+endif()
 
 # Set include directories
 target_include_directories(tmj PUBLIC include)
