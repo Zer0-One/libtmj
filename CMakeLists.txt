@@ -48,7 +48,7 @@ target_compile_definitions(tmj PUBLIC
 
 # Control symbol visibility
 # We need internal symbols for tests, so just export everything if we're building tests
-if(NOT LIBTMJ_TEST)
+if(NOT LIBTMJ_TEST AND NOT WIN32)
     # Add symbol versions from SOVERSION
     #get_target_property(TMJ_VERSION tmj VERSION)
     #configure_file(src/tmj.sym.in src/tmj.sym)
