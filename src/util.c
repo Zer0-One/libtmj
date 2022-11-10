@@ -37,7 +37,10 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
         return NULL;
 #endif
+// This ifdef is only here to shut up the compiler warnings
+#ifdef LIBTMJ_ZLIB
         dat2 = zlib_decompress(dat, dsize, &dsize2);
+#endif
     }
 
     if(strcmp(compression, "zstd") == 0){
@@ -46,7 +49,9 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
         return NULL;
 #endif
+#ifdef LIBTMJ_ZSTD
         dat2 = zstd_decompress(dat, dsize, &dsize2);
+#endif
     }
 
     if(dat2 == NULL){
@@ -61,5 +66,5 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
     *size = dsize2 / 4;
 
-    return dat2;
+    return (uint32_t*)dat2;
 }

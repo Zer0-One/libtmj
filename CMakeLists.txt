@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.2)
 
-project(libtmj VERSION 0.1.0 DESCRIPTION "A library for loading Tiled maps in TMJ and JSON format")
+project(libtmj VERSION 0.1.0 DESCRIPTION "A C library for loading Tiled maps and tilesets in JSON format")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
@@ -8,10 +8,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 
 # Set options
-option(LIBTMJ_TEST "Enable unit tests" ON)
-option(LIBTMJ_DOCS "Enable compiling documentation" ON)
-option(LIBTMJ_ZSTD "Enable zstd decompression for tile layers" ON)
-option(LIBTMJ_ZLIB "Enable zlib/gzip decompression for tile layers" ON)
+option(LIBTMJ_TEST "Enable unit tests" OFF)
+option(LIBTMJ_DOCS "Enable compiling documentation" OFF)
+option(LIBTMJ_ZSTD "Enable zstd decompression for tile layers" OFF)
+option(LIBTMJ_ZLIB "Enable zlib/gzip decompression for tile layers" OFF)
 option(BUILD_SHARED_LIBS "Build as a shared library" ON)
 # To enable debug builds, use -DCMAKE_BUILD_TYPE=Debug
 

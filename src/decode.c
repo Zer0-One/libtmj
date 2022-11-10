@@ -230,6 +230,9 @@ const char b64_decode_table[] = { 255, 255, 255, 255, 255, 255, 255, 255, 255,
 //    }
 //}
 
+/**
+ * Calculates the size of the data decoded from the given base64 string.
+ */
 size_t b64_decode_size(const char* data){
     if(data == NULL){
         return 0;
@@ -264,6 +267,9 @@ bool b64_is_valid_char(char c){
 }
 
 // Don't need this yet, so it'll stay unimplemented for now
+/**
+ * Unimplemented, but may be useful to implement in the future.
+ */
 char* b64_encode(uint8_t* data){
     return NULL;
 }

@@ -11,6 +11,8 @@ file an issue.
 - [`jansson`](https://github.com/akheron/jansson/)
 - [`zlib`](http://zlib.net/) (Optional, for zlib and gzip decompression support)
 - [`zstd`](https://github.com/facebook/zstd) (Optional, for zstd decompression support)
+- [`Doxygen`](https://www.doxygen.nl/) (Optional, for building documentation)
+    - [`Graphviz`](https://graphviz.org/) (Optional, for drawing graphs in the generated docs)
 
 
 ## Building
@@ -32,6 +34,11 @@ LIBTMJ\_TEST        | Build the test suite.
 
 ## Testing
 
+If you're going to build and run tests, don't forget to pull the Unity submodule:
+```
+git submodule update --init
+```
+
 To enable the test suite, invoke cmake with:
 ```
 cmake -DLIBTMJ_TEST=True .
@@ -39,6 +46,70 @@ cmake -DLIBTMJ_TEST=True .
 Then run the tests with:
 ```
 make test
+```
+
+## Usage example
+
+Below is a brief example of how to use libtmj. For more detail, see the [API
+documentation](https://zer0-one.github.io/libtmj/).
+
+```
+#include <stdio.h>
+#include <unistd.h>
+
+#include <tmj.h>
+
+// Logging callback
+void log_cb(tmj_log_priority priority, const char* msg){
+    switch(priority){
+        case DEBUG:
+            printf("DEBUG: %s\n", msg);
+            break;
+        case INFO:
+            printf("INFO: %s\n", msg);
+            break;
+        case WARNING:
+            printf("WARNING: %s\n", msg);
+            break;
+        case ERR:
+            printf("ERR: %s\n", msg);
+            break;
+        case CRIT:
+            printf("CRIT: %s\n", msg);
+            break;
+    }
+}
+
+// Layers are oganized into a tree, so descend recursively
+void enumerate_layers(Layer* layers, size_t count){
+    for(size_t i = 0; i < count; i++){
+        printf("Layer %d: %s\n", layers[i].id, layers[i].name);
+
+        if(layers[i].layers){
+            enumerate_layers(layers[i].layers, layers[i].layer_count);
+        }
+    }
+}
+
+int main(){
+    // Register logging callback
+    tmj_log_regcb(true, log_cb);
+
+    Map* map = tmj_map_loadf("overworld.tmj", false);
+
+    if(!map){
+        _exit(-1);
+    }
+
+    // Print the map width and height
+    printf("This map is %d tiles high and %d tiles wide\n", map->height, map->width);
+
+    // Print the names of all layers in the map
+    enumerate_layers(map->layers, map->layer_count);
+
+    // Free the map
+    tmj_map_free(map);
+}
 ```
 
 ## License

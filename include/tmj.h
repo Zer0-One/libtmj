@@ -498,7 +498,7 @@ void tmj_tileset_free(Tileset* tileset);
 
 
 /**
- * @ingroup logging
+ * @ingroup tmj
  */
 typedef enum TMJ_LOG_PRIORITY{
     DEBUG,
@@ -527,7 +527,7 @@ typedef enum TMJ_LOG_PRIORITY{
 //} LogMessage;
 
 /**
- * @ingroup logging
+ * @ingroup tmj
  * Registers a callback function to handle logging events.
  *
  * @param debug If set to true, the given callback function will receive debug
@@ -538,14 +538,14 @@ typedef enum TMJ_LOG_PRIORITY{
 void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
 
 
-/**
- * @defgroup util Util
- *
- * Helper functions.
- */
+///**
+// * @defgroup util Util
+// *
+// * Helper functions.
+// */
 
 /**
- * @ingroup util
+ * @ingroup tmj
  * The library major version.
  *
  * An unsigned integer representing the major component of the SemVer 2.0
@@ -554,7 +554,7 @@ void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
 extern const unsigned int TMJ_VERSION_MAJOR;
 
 /**
- * @ingroup util
+ * @ingroup tmj
  * The library minor version.
  *
  * An unsigned integer representing the minor component of the SemVer 2.0
@@ -563,7 +563,7 @@ extern const unsigned int TMJ_VERSION_MAJOR;
 extern const unsigned int TMJ_VERSION_MINOR;
 
 /**
- * @ingroup util
+ * @ingroup tmj
  * The library patch version.
  *
  * An unsigned integer representing the patch component of the SemVer 2.0
@@ -572,15 +572,15 @@ extern const unsigned int TMJ_VERSION_MINOR;
 extern const unsigned int TMJ_VERSION_PATCH;
 
 /**
- * @ingroup util
+ * @ingroup tmj
  * The full library version.
  *
- * A string containing the full SemVer version of this library.
+ * A string containing the full SemVer 2.0 version of this library.
  */
 extern const char* const TMJ_VERSION;
 
 /**
- * @ingroup util
+ * @ingroup tmj
  * Decodes layer data from a Tiled map layer.
  *
  * @param data The value of the "data_str" field from a Layer.
