@@ -508,7 +508,7 @@ typedef enum TMJ_LOG_PRIORITY{
     CRIT
 } tmj_log_priority;
 
-///**
+////**
 // * @ingroup logging
 // * The LogMessage struct is sent in logging callbacks to provide the caller
 // * with debugging and error information.

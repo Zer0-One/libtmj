@@ -54,6 +54,7 @@ Below is a brief example of how to use libtmj. For more detail, see the [API
 documentation](https://zer0-one.github.io/libtmj/).
 
 ```
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
 

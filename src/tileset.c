@@ -403,12 +403,6 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                     goto fail_tiles;
                 }
 
-                if(ret->tiles[idx].terrain == NULL){
-                    logmsg(ERR, "Unable to unpack tileset[%s]->tiles[%d]->terrain, the system is out of memory", ret->name, ret->tiles[idx].id);
-
-                    goto fail_tiles;
-                }
-
                 size_t idx2 = 0;
                 json_t* terrain_idx = NULL;
 
