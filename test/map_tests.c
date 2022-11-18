@@ -30,7 +30,7 @@ void setUp(){
 
 void tearDown(){}
 
-char* testmap_path = "../../example/overworld.tmj";
+char* testmap_path = "example/overworld.tmj";
 size_t layer_count = 4;
 char* layer1_type = "tilelayer";
 

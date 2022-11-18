@@ -30,7 +30,7 @@ void setUp(){
 
 void tearDown(){}
 
-char* tileset_path = "../../example/overworld.tsj";
+char* tileset_path = "example/overworld.tsj";
 
 Tileset* tf = NULL;
 Tileset* ts = NULL;

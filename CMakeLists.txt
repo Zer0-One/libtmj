@@ -15,7 +15,11 @@ option(LIBTMJ_ZLIB "Enable zlib/gzip decompression for tile layers" OFF)
 option(BUILD_SHARED_LIBS "Build as a shared library" ON)
 # To enable debug builds, use -DCMAKE_BUILD_TYPE=Debug
 
-find_package(Jansson REQUIRED)
+if(WIN32)
+    find_package(jansson CONFIG REQUIRED)
+else()
+    find_package(Jansson REQUIRED)
+endif()
 
 if(LIBTMJ_ZSTD)
     find_package(Zstd REQUIRED)
@@ -47,11 +51,7 @@ target_compile_definitions(tmj PUBLIC
 )
 
 # Control symbol visibility
-# We need internal symbols for tests, so just export everything if we're building tests
 if(NOT LIBTMJ_TEST AND NOT WIN32)
-    # Add symbol versions from SOVERSION
-    #get_target_property(TMJ_VERSION tmj VERSION)
-    #configure_file(src/tmj.sym.in src/tmj.sym)
     target_link_options(tmj PRIVATE "LINKER:--version-script=src/tmj.sym")
 endif()
 
@@ -64,7 +64,7 @@ set_target_properties(tmj PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(tmj PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
 # Set link libraries
-target_link_libraries(tmj Jansson::Jansson)
+target_link_libraries(tmj jansson::jansson)
 
 if(LIBTMJ_ZSTD)
     target_link_libraries(tmj Zstd::Zstd)
@@ -88,10 +88,10 @@ if(LIBTMJ_TEST)
     add_executable(decode_tests test/decode_tests.c test/Unity/src/unity.c)
     #add_executable(util_tests test/util_tests.c test/Unity/src/unity.c)
 
-    target_link_libraries(map_tests tmj Jansson::Jansson)
-    target_link_libraries(tileset_tests tmj Jansson::Jansson)
-    target_link_libraries(decode_tests tmj Jansson::Jansson)
-    #target_link_libraries(util_tests tmj Jansson::Jansson)
+    target_link_libraries(map_tests tmj jansson::jansson)
+    target_link_libraries(tileset_tests tmj jansson::jansson)
+    target_link_libraries(decode_tests tmj jansson::jansson)
+    #target_link_libraries(util_tests tmj jansson::jansson)
 
     if(LIBTMJ_ZSTD)
         target_link_libraries(decode_tests tmj Zstd::Zstd)
@@ -105,10 +105,10 @@ if(LIBTMJ_TEST)
     set_target_properties(decode_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
     #set_target_properties(util_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
-    add_test(NAME map_tests COMMAND map_tests WORKING_DIRECTORY test/bin)
-    add_test(NAME tileset_tests COMMAND map_tests WORKING_DIRECTORY test/bin)
-    add_test(NAME decode_tests COMMAND decode_tests WORKING_DIRECTORY test/bin)
-    #add_test(NAME util_tests COMMAND util_tests WORKING_DIRECTORY test/bin)
+    add_test(NAME map_tests COMMAND test/bin/map_tests)
+    add_test(NAME tileset_tests COMMAND test/bin/map_tests)
+    add_test(NAME decode_tests COMMAND test/bin/decode_tests)
+    #add_test(NAME util_tests COMMAND test/bin/util_tests)
 endif()
 
 # If documentation is enabled, compile docs

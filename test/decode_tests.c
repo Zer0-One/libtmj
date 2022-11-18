@@ -36,8 +36,8 @@ void test_b64_decode(){
 
     size_t dSize;
 
-    TEST_ASSERT_EQUAL_STRING(b64_decode(msg, &dSize), "This is a test string");
-    TEST_ASSERT_EQUAL_STRING(b64_decode(msg2, &dSize), "This is another test string!");
+    TEST_ASSERT_EQUAL_STRING(tmj_b64_decode(msg, &dSize), "This is a test string");
+    TEST_ASSERT_EQUAL_STRING(tmj_b64_decode(msg2, &dSize), "This is another test string!");
 }
 
 #ifdef LIBTMJ_ZLIB
@@ -49,8 +49,8 @@ void test_zlib_decode(){
     size_t decompressed_size_zlib = 0;
     size_t decompressed_size_gzip = 0;
     
-    char* msg_zlib_decompressed = zlib_decompress(b64_decode(msg_zlib, &dSize), 37, &decompressed_size_zlib);
-    char* msg_gzip_decompressed = zlib_decompress(b64_decode(msg_gzip, &dSize), 53, &decompressed_size_gzip);
+    char* msg_zlib_decompressed = tmj_zlib_decompress(tmj_b64_decode(msg_zlib, &dSize), 37, &decompressed_size_zlib);
+    char* msg_gzip_decompressed = tmj_zlib_decompress(tmj_b64_decode(msg_gzip, &dSize), 53, &decompressed_size_gzip);
 
     TEST_ASSERT_EQUAL_STRING(msg_zlib_decompressed, "This is a test string");
     TEST_ASSERT_EQUAL_STRING(msg_gzip_decompressed, "This is a test string");
@@ -66,9 +66,9 @@ void test_zstd_decode(){
     size_t dSize = 0;
     size_t decompressed_size_zstd = 0;
 
-    uint8_t* buf = b64_decode(msg, &dSize);
+    uint8_t* buf = tmj_b64_decode(msg, &dSize);
 
-    char* msg_decompressed = zstd_decompress(buf, dSize, &decompressed_size_zstd);
+    char* msg_decompressed = tmj_zstd_decompress(buf, dSize, &decompressed_size_zstd);
 
     TEST_ASSERT_EQUAL_STRING(msg_decompressed, "This is a test string");
 }

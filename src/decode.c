@@ -7,7 +7,7 @@
 
 #ifdef LIBTMJ_ZSTD
 
-uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
+uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
     logmsg(DEBUG, "Decode (zstd): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
@@ -59,7 +59,7 @@ uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompre
 
 #ifdef LIBTMJ_ZLIB
 
-uint8_t* zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
+uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
     logmsg(DEBUG, "Decode (zlib): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
@@ -270,11 +270,11 @@ bool b64_is_valid_char(char c){
 /**
  * Unimplemented, but may be useful to implement in the future.
  */
-char* b64_encode(uint8_t* data){
+char* tmj_b64_encode(uint8_t* data){
     return NULL;
 }
 
-uint8_t* b64_decode(const char* data, size_t* decoded_size){
+uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
     if(data == NULL){
         logmsg(ERR, "Decode (b64): Unable to decode null input");
 

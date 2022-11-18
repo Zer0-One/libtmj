@@ -29,7 +29,7 @@
  * @return On success, returns a dynamically-allocated (and decompressed)
  * buffer of unsigned bytes. The returned buffer must be freed by the caller.
  */
-uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size);
+uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size);
 
 #endif
 
@@ -48,7 +48,7 @@ uint8_t* zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompre
  * @return On success, returns a dynamically-allocated (and decompressed)
  * buffer of unsigned bytes. The returned buffer must be freed by the caller.
  */
-uint8_t* zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size);
+uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size);
 
 #endif
 
@@ -62,7 +62,7 @@ uint8_t* zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompre
  * @return On success, returns a dynamically-allocated array of unsigned bytes.
  * The returned array must be freed by the caller.
  */
-uint8_t* b64_decode(const char* data, size_t* decoded_size);
+uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size);
 
 
 #endif

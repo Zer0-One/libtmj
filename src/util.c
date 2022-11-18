@@ -20,7 +20,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     }
 
     size_t dsize = 0;
-    uint8_t* dat = b64_decode(data, &dsize);
+    uint8_t* dat = tmj_b64_decode(data, &dsize);
 
     if(dat == NULL){
         logmsg(ERR, "Unable to base64 decode layer data");
@@ -39,7 +39,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 #endif
 // This ifdef is only here to shut up the compiler warnings
 #ifdef LIBTMJ_ZLIB
-        dat2 = zlib_decompress(dat, dsize, &dsize2);
+        dat2 = tmj_zlib_decompress(dat, dsize, &dsize2);
 #endif
     }
 
@@ -50,7 +50,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
         return NULL;
 #endif
 #ifdef LIBTMJ_ZSTD
-        dat2 = zstd_decompress(dat, dsize, &dsize2);
+        dat2 = tmj_zstd_decompress(dat, dsize, &dsize2);
 #endif
     }
 

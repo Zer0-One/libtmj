@@ -11,3 +11,6 @@ EXPORTS
     TMJ_VERSION_PATCH
     TMJ_VERSION
     tmj_decode_layer
+    tmj_zstd_decompress
+    tmj_zlib_decompress
+    tmj_b64_decode

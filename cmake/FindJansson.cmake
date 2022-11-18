@@ -32,13 +32,13 @@ find_package_handle_standard_args(Jansson DEFAULT_MSG
 
 if(Jansson_FOUND AND NOT TARGET Jansson::Jansson)
 	if (SYSTEM_Jansson)
-		add_library(Jansson::Jansson IMPORTED INTERFACE)
+		add_library(jansson::jansson IMPORTED INTERFACE)
 	else()
-		add_library(Jansson::Jansson UNKNOWN IMPORTED)
-		set_property(TARGET Jansson::Jansson APPEND PROPERTY
+		add_library(jansson::jansson UNKNOWN IMPORTED)
+		set_property(TARGET jansson::jansson APPEND PROPERTY
 			IMPORTED_LOCATION "${Jansson_LIBRARY}")
 	endif()
 
-	set_target_properties(Jansson::Jansson PROPERTIES
+	set_target_properties(jansson::jansson PROPERTIES
 		INTERFACE_INCLUDE_DIRECTORIES "${Jansson_INCLUDE_DIRS}")
 endif()

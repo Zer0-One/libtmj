@@ -7,8 +7,8 @@ on:
     branches: [ "master" ]
 
 jobs:
-  Build:
-    name: linux-${{ matrix.os }}-${{ matrix.cc }}
+  build-linux:
+    name: build-${{ matrix.os }}-${{ matrix.cc }}
     runs-on: ${{ matrix.os }}
     env:
       CC: ${{ matrix.cc }}
@@ -40,14 +40,47 @@ jobs:
     - name: Create libtmj Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: libtmj-master
+        name: ${{ matrix.os }}-${{ matrix.cc }}-libtmj-master
         path: lib/*
         if-no-files-found: error
         retention-days: 1
 
+  build-windows-latest-msvc:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+
+      - name: Install dependencies
+        run: vcpkg install jansson:x64-windows zstd:x64-windows zlib:x64-windows
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+
+      - name: Build
+        run: cmake --build . --config Release
+
+      - name: Test
+        run: ctest -C Release
+
+      - name: Create libtmj Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-latest-msvc-libtmj-master
+          path: lib/*
+          if-no-files-found: error
+          retention-days: 1
+#  build-macos-latest-clang:
+#    runs-on: macos-latest
 
   Pages:
-    needs: Build
+    needs: [build-linux, build-windows-latest-msvc] #, build-macos-clang]
 
     permissions:
       pages: write
