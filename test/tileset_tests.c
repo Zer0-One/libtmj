@@ -24,23 +24,23 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(){
+void setUp(void){
     tmj_log_regcb(true, log_cb);
 }
 
-void tearDown(){}
+void tearDown(void){}
 
 char* tileset_path = "example/overworld.tsj";
 
 Tileset* tf = NULL;
 Tileset* ts = NULL;
 
-void test_tileset_loadf(){
+void test_tileset_loadf(void){
     tf = tmj_tileset_loadf(tileset_path, true);
     TEST_ASSERT_NOT_NULL(tf);
 }
 
-void test_tileset_load(){
+void test_tileset_load(void){
     FILE* f = fopen(tileset_path, "r");
 
     fseek(f, 0, SEEK_END);
@@ -59,12 +59,12 @@ void test_tileset_load(){
     free(s);
 }
 
-void test_tileset_free(){
+void test_tileset_free(void){
     tmj_tileset_free(tf);
     tmj_tileset_free(ts);
 }
 
-int main(){
+int main(void){
     UNITY_BEGIN();
     RUN_TEST(test_tileset_loadf);
     RUN_TEST(test_tileset_load);

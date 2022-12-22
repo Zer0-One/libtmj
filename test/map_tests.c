@@ -24,11 +24,11 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(){
+void setUp(void){
     tmj_log_regcb(true, log_cb);
 }
 
-void tearDown(){}
+void tearDown(void){}
 
 char* testmap_path = "example/overworld.tmj";
 size_t layer_count = 4;
@@ -37,14 +37,14 @@ char* layer1_type = "tilelayer";
 Map* mf = NULL;
 Map* ms = NULL;
 
-void test_map_loadf(){
+void test_map_loadf(void){
     mf = tmj_map_loadf(testmap_path, true);
     TEST_ASSERT_NOT_NULL(mf);
     TEST_ASSERT_EQUAL_size_t(mf->layer_count, 4);
     TEST_ASSERT_EQUAL_STRING(mf->layers[0].type, layer1_type);
 }
 
-void test_map_load(){
+void test_map_load(void){
     FILE* f = fopen(testmap_path, "r");
 
     fseek(f, 0, SEEK_END);
@@ -65,12 +65,12 @@ void test_map_load(){
     free(s);
 }
 
-void test_map_free(){
+void test_map_free(void){
     tmj_map_free(mf);
     tmj_map_free(ms);
 }
 
-int main(){
+int main(void){
     UNITY_BEGIN();
     RUN_TEST(test_map_loadf);
     RUN_TEST(test_map_load);

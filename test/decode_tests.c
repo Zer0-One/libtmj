@@ -25,12 +25,12 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(){
+void setUp(void){
     tmj_log_regcb(true, log_cb);
 }
-void tearDown(){}
+void tearDown(void){}
 
-void test_b64_decode(){
+void test_b64_decode(void){
     const char* msg = "VGhpcyBpcyBhIHRlc3Qgc3RyaW5n";
     const char* msg2 = "VGhpcyBpcyBhbm90aGVyIHRlc3Qgc3RyaW5nIQ==";
 
@@ -41,7 +41,7 @@ void test_b64_decode(){
 }
 
 #ifdef LIBTMJ_ZLIB
-void test_zlib_decode(){
+void test_zlib_decode(void){
     const char* msg_zlib = "eJwLycgsVgCiRIWS1OISheKSosy8dABRSQet";
     const char* msg_gzip = "H4sIAAAAAAAAAwvJyCxWAKJEhZLU4hKF4pKizLx0AG3zTmsVAAAA";
 
@@ -60,7 +60,7 @@ void test_zlib_decode(){
 #endif
 
 #ifdef LIBTMJ_ZSTD
-void test_zstd_decode(){
+void test_zstd_decode(void){
     const char* msg = "KLUv/SQVqQAAVGhpcyBpcyBhIHRlc3Qgc3RyaW5nQBJZLg==";
 
     size_t dSize = 0;
@@ -74,7 +74,7 @@ void test_zstd_decode(){
 }
 #endif
 
-int main(){
+int main(void){
     UNITY_BEGIN();
     RUN_TEST(test_b64_decode);
 #ifdef LIBTMJ_ZLIB
