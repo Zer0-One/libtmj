@@ -41,7 +41,7 @@ void test_tileset_loadf(void){
 }
 
 void test_tileset_load(void){
-    FILE* f = fopen(tileset_path, "r");
+    FILE* f = fopen(tileset_path, "rb");
 
     fseek(f, 0, SEEK_END);
     size_t fsize = ftell(f);

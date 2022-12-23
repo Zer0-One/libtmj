@@ -45,7 +45,7 @@ void test_map_loadf(void){
 }
 
 void test_map_load(void){
-    FILE* f = fopen(testmap_path, "r");
+    FILE* f = fopen(testmap_path, "rb");
 
     fseek(f, 0, SEEK_END);
     size_t fsize = ftell(f);

@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 # Set output directory
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY lib)
 
 # Set options
 option(LIBTMJ_TEST "Enable unit tests" OFF)
@@ -107,16 +108,13 @@ if(LIBTMJ_TEST)
     #set_target_properties(util_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
     add_test(NAME map_tests COMMAND test/bin/map_tests)
-    add_test(NAME tileset_tests COMMAND test/bin/map_tests)
+    add_test(NAME tileset_tests COMMAND test/bin/tileset_tests)
     add_test(NAME decode_tests COMMAND test/bin/decode_tests)
     #add_test(NAME util_tests COMMAND test/bin/util_tests)
 
     # Add library output dir to PATH, because in Windows, the loader will have
     # no clue where to find anything
     if(WIN32)
-        message("LIB OUTPUT DIR IS:
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE}")
-
         set_tests_properties(map_tests PROPERTIES ENVIRONMENT_MODIFICATION
             PATH=path_list_append:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
         set_tests_properties(tileset_tests PROPERTIES ENVIRONMENT_MODIFICATION

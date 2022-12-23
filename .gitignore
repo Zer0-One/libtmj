@@ -9,6 +9,28 @@ docs/
 CMakeDoxyfile.in
 CMakeDoxygenDefaults.cmake
 
+# VS
+ALL_BUILD.vcxproj
+ALL_BUILD.vcxproj.filters
+RUN_TESTS.vcxproj
+RUN_TESTS.vcxproj.filters
+ZERO_CHECK.vcxproj
+ZERO_CHECK.vcxproj.filters
+decode_tests.dir/
+decode_tests.vcxproj
+decode_tests.vcxproj.filters
+libtmj.sln
+map_tests.dir/
+map_tests.vcxproj
+map_tests.vcxproj.filters
+tileset_tests.dir/
+tileset_tests.vcxproj
+tileset_tests.vcxproj.filters
+tmj.dir/
+tmj.vcxproj
+tmj.vcxproj.filters
+x64/
+
 # scan-build
 map.plist/
 
