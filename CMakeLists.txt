@@ -79,7 +79,11 @@ endif()
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_C_FLAGS_RELEASE "-O2")
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -fsanitize=address")
+if(WIN32)
+    set(CMAKE_C_FLAGS_DEBUG "-Z7")
+else()
+    set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -fsanitize=address")
+endif()
 
 # If tests are enabled, make tests
 if(LIBTMJ_TEST)

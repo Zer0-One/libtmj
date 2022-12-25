@@ -29,7 +29,7 @@ jobs:
       run: sudo apt-get install -y libjansson-dev zlib1g-dev libzstd-dev
 
     - name: Configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON .
+      run: cmake -DCMAKE_BUILD_TYPE=Debug -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON .
 
     - name: Build
       run: cmake --build .
@@ -61,13 +61,13 @@ jobs:
         run: vcpkg install jansson:x64-windows zstd:x64-windows zlib:x64-windows
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
 
       - name: Build
-        run: cmake --build . --config Release
+        run: cmake --build . --config Debug
 
       - name: Test
-        run: ctest -C Release
+        run: ctest -C Debug
 
       - name: Create libtmj Artifact
         uses: actions/upload-artifact@v3
