@@ -33,8 +33,8 @@ Property* unpack_properties(json_t* properties){
         return NULL;
     }
 
-    size_t idx;
-    json_t* property;
+    size_t idx = 0;
+    json_t* property = NULL;
 
     json_array_foreach(properties, idx, property){
         int unpk = json_unpack_ex(property,
@@ -180,10 +180,15 @@ Object* unpack_objects(json_t* objects){
         return NULL;
     }
 
-    size_t idx;
-    json_t* object;
+    size_t idx = 0;
+    json_t* object = NULL;
 
     json_array_foreach(objects, idx, object){
+        json_t* properties = NULL;
+        json_t* text = NULL;
+        json_t* polygon = NULL;
+        json_t* polyline = NULL;
+
         //Unpack scalar values
         int unpk = json_unpack_ex(object,
                                   &error,
@@ -193,6 +198,7 @@ Object* unpack_objects(json_t* objects){
                                   "s?s, s:s, s?s,"
                                   "s?i, s:i,"
                                   "s:F, s:F, s:F, s:F, s:F,"
+                                  "s?o"
                                   "}",
                                   "ellipse", &ret[idx].ellipse,
                                   "point", &ret[idx].point,
@@ -206,7 +212,11 @@ Object* unpack_objects(json_t* objects){
                                   "rotation", &ret[idx].rotation,
                                   "width", &ret[idx].width,
                                   "x", &ret[idx].x,
-                                  "y", &ret[idx].y
+                                  "y", &ret[idx].y,
+                                  "properties", &properties,
+                                  "text", &text,
+                                  "polygon", &polygon,
+                                  "polyline", &polyline
                                  );
         
         if(unpk == -1){
@@ -216,16 +226,6 @@ Object* unpack_objects(json_t* objects){
         }
 
         //Unpack properties
-        json_t* properties = NULL;
-
-        unpk = json_unpack_ex(object, &error, 0, "{s?o}", "properties", &properties);
-
-        if(unpk == -1){
-            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
-
-            goto fail_properties;
-        }
-
         if(properties != NULL){
             ret[idx].properties = unpack_properties(properties);
 
@@ -239,16 +239,6 @@ Object* unpack_objects(json_t* objects){
         }
 
         // Unpack text
-        json_t* text = NULL;
-
-        unpk = json_unpack_ex(object, &error, 0, "{s?o}", "text", &text);
-
-        if(unpk == -1){
-            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
-
-            goto fail_text;
-        }
-
         if(text != NULL){
             ret[idx].text = unpack_text(text);
 
@@ -265,16 +255,6 @@ Object* unpack_objects(json_t* objects){
         }
 
         // Unpack Polygon
-        json_t* polygon = NULL;
-
-        unpk = json_unpack_ex(object, &error, 0, "{s?o}", "polygon", &polygon);
-
-        if(unpk == -1){
-            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
-
-            goto fail_polygon;
-        }
-
         if(polygon != NULL){
             ret[idx].polygon = unpack_points(polygon);
             
@@ -289,16 +269,6 @@ Object* unpack_objects(json_t* objects){
         }
 
         // Unpack Polyline
-        json_t* polyline = NULL;
-
-        unpk = json_unpack_ex(object, &error, 0, "{s?o}", "polyline", &polyline);
-
-        if(unpk == -1){
-            logmsg(ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
-
-            goto fail_polyline;
-        }
-
         if(polyline != NULL){
             ret[idx].polyline = unpack_points(polyline);
 
@@ -711,6 +681,8 @@ Layer* unpack_layers(json_t* layers){
 
                     goto fail_chunks;
                 }
+
+                ret[idx].object_count = json_array_size(objects);
             }
         }
 

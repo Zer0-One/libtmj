@@ -70,7 +70,7 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
 
     const size_t INFLATE_BLOCK_SIZE = 262144;
 
-    void* out = malloc(INFLATE_BLOCK_SIZE);
+    uint8_t* out = malloc(INFLATE_BLOCK_SIZE);
 
     if(out == NULL){
         logmsg(ERR, "Decode (zlib): Unable to allocate buffer for decompressed data, the system is out of memory");
@@ -85,7 +85,7 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
     stream.opaque = Z_NULL;
 
     stream.avail_in = data_size;
-    stream.avail_out = data_size;
+    stream.avail_out = INFLATE_BLOCK_SIZE;
 
     stream.next_in = data;
     stream.next_out = out;
@@ -130,22 +130,29 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
     while(stat != Z_STREAM_END){
         switch(stat){
             case Z_BUF_ERROR:
-                if(realloc(out, INFLATE_BLOCK_SIZE * realloc_scale) == NULL){
-                    free(out);
+                // If we hit Z_BUF_ERROR with buffer space left, something's fucked
+                if(stream.avail_out != 0){
+                    logmsg(ERR, "Decode (zlib): No progress possible");
 
+                    return NULL;
+                }
+
+                logmsg(DEBUG, "Decode (zlib): Z_BUF_ERROR");
+            case Z_OK:
+                logmsg(DEBUG, "Decode (zlib): inflate OK");
+
+                out = realloc(out, INFLATE_BLOCK_SIZE * realloc_scale);
+                if(out == NULL){
                     logmsg(ERR, "Decode (zlib): Unable to grow inflate output buffer, the system is out memory");
 
                     return NULL;
                 }
 
+                stream.avail_out = INFLATE_BLOCK_SIZE;
+
+                stream.next_out = out + stream.total_out;
+
                 realloc_scale++;
-
-                stream.avail_out += INFLATE_BLOCK_SIZE;
-
-                break;
-
-            case Z_OK:
-                logmsg(DEBUG, "Decode (zlib): inflate OK");
 
                 break;
 
@@ -294,8 +301,6 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
 
     if(out == NULL){
         logmsg(ERR, "Decode (b64): Unable to allocate output buffer, the system is out of memory");
-
-        free(out);
 
         return NULL;
     }

@@ -464,13 +464,13 @@ void tilesets_free(Tileset* tilesets, size_t tileset_count){
         // Free tiles
         if(tilesets[i].tiles){
             for(size_t j = 0; j < tilesets[i].tile_count; j++){
-                free(tilesets[i].tiles->animation);
-                if(tilesets[i].tiles->objectgroup != NULL){
-                    free(tilesets[i].tiles->objectgroup->properties);
-                    free_objects(tilesets[i].tiles->objectgroup->objects, tilesets[i].tiles->objectgroup->object_count);
+                free(tilesets[i].tiles[j].animation);
+                if(tilesets[i].tiles[j].objectgroup != NULL){
+                    free(tilesets[i].tiles[j].objectgroup->properties);
+                    free_objects(tilesets[i].tiles[j].objectgroup->objects, tilesets[i].tiles[j].objectgroup->object_count);
                 }
-                free(tilesets[i].tiles->objectgroup);
-                free(tilesets[i].tiles->properties);
+                free(tilesets[i].tiles[j].objectgroup);
+                free(tilesets[i].tiles[j].properties);
             }
 
             free(tilesets[i].tiles);
@@ -490,6 +490,8 @@ void tilesets_free(Tileset* tilesets, size_t tileset_count){
         free(tilesets[i].transformations);
         free(tilesets[i].tileoffset);
         free(tilesets[i].grid);
+
+        json_decref(tilesets[i].root);
     }
 
     free(tilesets);

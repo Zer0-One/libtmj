@@ -49,7 +49,7 @@ void test_tileset_load(void){
 
     char* s = calloc(1, fsize + 1);
 
-    TEST_ASSERT_EQUAL_size_t(fread(s, 1, fsize, f), fsize);
+    TEST_ASSERT_EQUAL_size_t(fsize, fread(s, 1, fsize, f));
     fclose(f);
 
     ts = tmj_tileset_load(s);
