@@ -314,6 +314,10 @@ typedef struct TileOffset {
  * Note that for sheets, tiles are numbered left-to-right, top-to-bottom
  */
 typedef struct Tileset {
+    /**
+     * The root object returned by jansson after parsing. This field is
+     * internal state and should not be tampered with.
+     */
     json_t* root; // NULL for embedded tilesets; only set for external tilesets
 
     char* backgroundcolor; // Optional
@@ -362,6 +366,10 @@ typedef struct Tileset {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#json-map-format
  */
 typedef struct Map {
+    /**
+     * The root object returned by jansson after parsing. This field is
+     * internal state and should not be tampered with.
+     */
     json_t* root;
 
     bool infinite;

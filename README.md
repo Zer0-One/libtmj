@@ -15,11 +15,22 @@ file an issue.
     - [`Graphviz`](https://graphviz.org/) (Optional, for drawing graphs in the generated docs)
 
 
+To build in Windows, use vcpkg to fetch and install the above dependencies:
+```
+vcpkg install jansson:x64-windows zstd:x64-windows zlib:x64-windows
+```
+
 ## Building
 
 From the repository root, run:
 ```
-cmake . && make
+cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON . && make
+```
+
+For Windows users, make sure to include the vcpkg toolchain file:
+```
+cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake .
+cmake --build . --config Release
 ```
 
 Available cmake build options:
@@ -41,17 +52,23 @@ git submodule update --init
 
 To enable the test suite, invoke cmake with:
 ```
-cmake -DLIBTMJ_TEST=True .
+-DLIBTMJ_TEST=True
 ```
 Then run the tests with:
 ```
-make test
+ctest // For *nix
+ctest -C Release // For Windows
 ```
 
 ## Usage example
 
 Below is a brief example of how to use libtmj. For more detail, see the [API
-documentation](https://zer0-one.github.io/libtmj/).
+documentation](https://zer0-one.github.io/libtmj/). Specifically, refer to the
+[Data Structures](https://zer0-one.github.io/libtmj/annotated.html) page for a
+list of fields provided by each structure. They match the names given in the
+Tiled documentation, with the exception of added fields which give the number
+of elements in array fields, whose names are `{field}_count` (as shown below
+for the "layer" field).
 
 ```
 #include <stdbool.h>
@@ -63,19 +80,19 @@ documentation](https://zer0-one.github.io/libtmj/).
 // Logging callback
 void log_cb(tmj_log_priority priority, const char* msg){
     switch(priority){
-        case DEBUG:
+        case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
-        case INFO:
+        case TMJ_LOG_INFO:
             printf("INFO: %s\n", msg);
             break;
-        case WARNING:
+        case TMJ_LOG_WARNING:
             printf("WARNING: %s\n", msg);
             break;
-        case ERR:
+        case TMJ_LOG_ERR:
             printf("ERR: %s\n", msg);
             break;
-        case CRIT:
+        case TMJ_LOG_CRIT:
             printf("CRIT: %s\n", msg);
             break;
     }
