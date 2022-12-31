@@ -27,7 +27,7 @@ void logmsg(tmj_log_priority priority, char* msg, ...){
     }
 
     // Don't log debug messages if we have debugging turned off
-    if(priority == DEBUG && !log_debug){
+    if(priority == TMJ_LOG_DEBUG && !log_debug){
         return;
     }
 

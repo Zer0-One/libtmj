@@ -8,10 +8,10 @@
 #ifdef LIBTMJ_ZSTD
 
 uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
-    logmsg(DEBUG, "Decode (zstd): Decompressing buffer of size %zu", data_size);
+    logmsg(TMJ_LOG_DEBUG, "Decode (zstd): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
-        logmsg(ERR, "Decode (zstd): Cannot decompress NULL buffer");
+        logmsg(TMJ_LOG_ERR, "Decode (zstd): Cannot decompress NULL buffer");
 
         return NULL;
     }
@@ -19,13 +19,13 @@ uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* deco
     size_t ret_size = ZSTD_getFrameContentSize(data, data_size);
 
     if(ret_size == ZSTD_CONTENTSIZE_ERROR){
-        logmsg(ERR, "Decode (zstd): Unable to decompress non-zstd buffer");
+        logmsg(TMJ_LOG_ERR, "Decode (zstd): Unable to decompress non-zstd buffer");
 
         return NULL;
     }
 
     if(ret_size == ZSTD_CONTENTSIZE_UNKNOWN){
-        logmsg(ERR, "Decode (zstd): Unable to determine uncompressed size of compressed data");
+        logmsg(TMJ_LOG_ERR, "Decode (zstd): Unable to determine uncompressed size of compressed data");
 
         return NULL;
     }
@@ -33,17 +33,17 @@ uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* deco
     void* ret = malloc(ret_size);
 
     if(ret == NULL){
-        logmsg(ERR, "Decode (zstd): Unable to allocate buffer for decompressed data, the system is out of memory");
+        logmsg(TMJ_LOG_ERR, "Decode (zstd): Unable to allocate buffer for decompressed data, the system is out of memory");
 
         return NULL;
     }
 
     size_t dsize = ZSTD_decompress(ret, ret_size, data, data_size);
 
-    logmsg(DEBUG, "Decode (zstd): Decompressed byte total: %zu", dsize);
+    logmsg(TMJ_LOG_DEBUG, "Decode (zstd): Decompressed byte total: %zu", dsize);
 
     if(ZSTD_isError(dsize)){
-        logmsg(ERR, "Decode (zstd): Decompression error: %s", ZSTD_getErrorName(dsize));
+        logmsg(TMJ_LOG_ERR, "Decode (zstd): Decompression error: %s", ZSTD_getErrorName(dsize));
 
         free(ret);
 
@@ -60,10 +60,10 @@ uint8_t* tmj_zstd_decompress(const uint8_t* data, size_t data_size, size_t* deco
 #ifdef LIBTMJ_ZLIB
 
 uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* decompressed_size){
-    logmsg(DEBUG, "Decode (zlib): Decompressing buffer of size %zu", data_size);
+    logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Decompressing buffer of size %zu", data_size);
 
     if(data == NULL){
-        logmsg(ERR, "Decode (zlib): Cannot decompress NULL buffer");
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Cannot decompress NULL buffer");
 
         return NULL;
     }
@@ -73,7 +73,7 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
     uint8_t* out = malloc(INFLATE_BLOCK_SIZE);
 
     if(out == NULL){
-        logmsg(ERR, "Decode (zlib): Unable to allocate buffer for decompressed data, the system is out of memory");
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to allocate buffer for decompressed data, the system is out of memory");
 
         return NULL;
     }
@@ -95,21 +95,21 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
 
     switch(ret){
         case Z_OK:
-            logmsg(DEBUG, "Decode (zlib): inflate initialization OK");
+            logmsg(TMJ_LOG_DEBUG, "Decode (zlib): inflate initialization OK");
             break;
 
         case Z_MEM_ERROR:
-            logmsg(ERR, "Decode (zlib): Unable to initialize inflate, the system is out of memory");
+            logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to initialize inflate, the system is out of memory");
 
             goto fail_zlib;
 
         case Z_VERSION_ERROR:
-            logmsg(ERR, "Decode (zlib): Unable to initialize inflate, incompatible zlib library version");
+            logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to initialize inflate, incompatible zlib library version");
 
             goto fail_zlib;
 
         case Z_STREAM_ERROR:
-            logmsg(ERR, "Decode (zlib): Unable to initialize inflate, invalid parameter(s) to inflate initialization routine");
+            logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to initialize inflate, invalid parameter(s) to inflate initialization routine");
 
             goto fail_zlib;
 
@@ -132,18 +132,18 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
             case Z_BUF_ERROR:
                 // If we hit Z_BUF_ERROR with buffer space left, something's fucked
                 if(stream.avail_out != 0){
-                    logmsg(ERR, "Decode (zlib): No progress possible");
+                    logmsg(TMJ_LOG_ERR, "Decode (zlib): No progress possible");
 
                     return NULL;
                 }
 
-                logmsg(DEBUG, "Decode (zlib): Z_BUF_ERROR");
+                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Z_BUF_TMJ_LOG_ERROR");
             case Z_OK:
-                logmsg(DEBUG, "Decode (zlib): inflate OK");
+                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): inflate OK");
 
                 out = realloc(out, INFLATE_BLOCK_SIZE * realloc_scale);
                 if(out == NULL){
-                    logmsg(ERR, "Decode (zlib): Unable to grow inflate output buffer, the system is out memory");
+                    logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to grow inflate output buffer, the system is out memory");
 
                     return NULL;
                 }
@@ -157,22 +157,22 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
                 break;
 
             case Z_NEED_DICT:
-                logmsg(ERR, "Decode (zlib): Unable to complete inflate, preset dictionary required");
+                logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to complete inflate, preset dictionary required");
 
                 goto fail_zlib;
 
             case Z_DATA_ERROR:
-                logmsg(ERR, "Decode (zlib): Unable to complete inflate, input data appears corrupted");
+                logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to complete inflate, input data appears corrupted");
 
                 goto fail_zlib;
 
             case Z_STREAM_ERROR:
-                logmsg(ERR, "Decode (zlib): Unable to complete inflate, stream structure inconsistent");
+                logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to complete inflate, stream structure inconsistent");
 
                 goto fail_zlib;
 
             case Z_MEM_ERROR:
-                logmsg(ERR, "Decode (zlib): Unable to complete inflate, the system is out of memory");
+                logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to complete inflate, the system is out of memory");
 
                 goto fail_zlib;
 
@@ -183,10 +183,10 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
         stat = inflate(&stream, Z_NO_FLUSH);
     }
 
-    logmsg(DEBUG, "Decode (zlib): Completed inflate, %zd bytes written to output buffer", stream.total_out);
+    logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Completed inflate, %zd bytes written to output buffer", stream.total_out);
 
     if(inflateEnd(&stream) != Z_OK){
-        logmsg(ERR, "Decode (zlib): Completed inflate, but could not clean up; stream state was inconsistent");
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Completed inflate, but could not clean up; stream state was inconsistent");
 
         goto fail_zlib;
     }
@@ -199,7 +199,7 @@ fail_zlib:
     free(out);
 
     if(stream.msg){
-        logmsg(ERR, "Decode (zlib): zlib error: '%s'", stream.msg);
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): zlib error: '%s'", stream.msg);
     }
 
     return NULL;
@@ -283,7 +283,7 @@ char* tmj_b64_encode(uint8_t* data){
 
 uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
     if(data == NULL){
-        logmsg(ERR, "Decode (b64): Unable to decode null input");
+        logmsg(TMJ_LOG_ERR, "Decode (b64): Unable to decode null input");
 
         return NULL;
     }
@@ -291,7 +291,7 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
     size_t len = strlen(data);
 
     if(len % 4 != 0){
-        logmsg(ERR, "Decode (b64): Invalid Base64 string, input length is not a multiple of 4");
+        logmsg(TMJ_LOG_ERR, "Decode (b64): Invalid Base64 string, input length is not a multiple of 4");
 
         return NULL;
     }
@@ -300,7 +300,7 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
     uint8_t* out = malloc(dSize);
 
     if(out == NULL){
-        logmsg(ERR, "Decode (b64): Unable to allocate output buffer, the system is out of memory");
+        logmsg(TMJ_LOG_ERR, "Decode (b64): Unable to allocate output buffer, the system is out of memory");
 
         return NULL;
     }
@@ -308,7 +308,7 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size){
     // Validate the input
     for(size_t i = 0; i < len; i++){
         if(!b64_is_valid_char(data[i])){
-            logmsg(ERR, "Decode (b64): Invalid Base64 character, '%c'", data[i]);
+            logmsg(TMJ_LOG_ERR, "Decode (b64): Invalid Base64 character, '%c'", data[i]);
 
             free(out);
 

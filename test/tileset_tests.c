@@ -6,19 +6,19 @@
 
 void log_cb(tmj_log_priority priority, const char* msg){
     switch(priority){
-        case DEBUG:
+        case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
-        case INFO:
+        case TMJ_LOG_INFO:
             printf("INFO: %s\n", msg);
             break;
-        case WARNING:
+        case TMJ_LOG_WARNING:
             printf("WARNING: %s\n", msg);
             break;
-        case ERR:
+        case TMJ_LOG_ERR:
             printf("ERR: %s\n", msg);
             break;
-        case CRIT:
+        case TMJ_LOG_CRIT:
             printf("CRIT: %s\n", msg);
             break;
     }

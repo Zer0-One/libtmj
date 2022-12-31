@@ -14,7 +14,7 @@ const char* const TMJ_VERSION = LIBTMJ_VERSION;
 
 uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size){
     if(strcmp(encoding, "base64") != 0){
-        logmsg(ERR, "Layer data in csv format; decode it yourself");
+        logmsg(TMJ_LOG_ERR, "Layer data in csv format; decode it yourself");
 
         return NULL;
     }
@@ -23,7 +23,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     uint8_t* dat = tmj_b64_decode(data, &dsize);
 
     if(dat == NULL){
-        logmsg(ERR, "Unable to base64 decode layer data");
+        logmsg(TMJ_LOG_ERR, "Unable to base64 decode layer data");
 
         return NULL;
     }
@@ -33,7 +33,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
     if(strcmp(compression, "zlib") == 0 || strcmp(compression, "gzip") == 0){
 #ifndef LIBTMJ_ZLIB
-        logmsg(ERR, "Layer data encoded with %s, but libtmj was not compiled with %s support", compression, compression);
+        logmsg(TMJ_LOG_ERR, "Layer data encoded with %s, but libtmj was not compiled with %s support", compression, compression);
 
         return NULL;
 #endif
@@ -45,7 +45,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
     if(strcmp(compression, "zstd") == 0){
 #ifndef LIBTMJ_ZSTD
-        logmsg(ERR, "Layer data encoded with zstd, but libtmj was not compiled with zstd support");
+        logmsg(TMJ_LOG_ERR, "Layer data encoded with zstd, but libtmj was not compiled with zstd support");
 
         return NULL;
 #endif
@@ -55,7 +55,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     }
 
     if(dat2 == NULL){
-        logmsg(ERR, "Unable to decompress %s encoded layer data", compression);
+        logmsg(TMJ_LOG_ERR, "Unable to decompress %s encoded layer data", compression);
 
         free(dat);
 

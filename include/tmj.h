@@ -501,11 +501,11 @@ void tmj_tileset_free(Tileset* tileset);
  * @ingroup tmj
  */
 typedef enum TMJ_LOG_PRIORITY{
-    DEBUG,
-    INFO,
-    WARNING,
-    ERR,
-    CRIT
+    TMJ_LOG_DEBUG,
+    TMJ_LOG_INFO,
+    TMJ_LOG_WARNING,
+    TMJ_LOG_ERR,
+    TMJ_LOG_CRIT
 } tmj_log_priority;
 
 ////**
