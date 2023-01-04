@@ -53,7 +53,7 @@ target_compile_definitions(tmj PUBLIC
 )
 
 # Control symbol visibility
-if(NOT WIN32)
+if(NOT WIN32 AND NOT APPLE)
     target_link_options(tmj PRIVATE "LINKER:--version-script=src/tmj.sym")
 endif()
 

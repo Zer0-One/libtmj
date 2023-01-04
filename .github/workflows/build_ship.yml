@@ -20,7 +20,7 @@ jobs:
         os: ["ubuntu-latest"]
 
     steps:
-    - name: Checkout source
+    - name: Checkout Source
       uses: actions/checkout@v3
       with:
         submodules: 'true'
@@ -44,6 +44,35 @@ jobs:
         path: lib/*
         if-no-files-found: error
         retention-days: 1
+
+  build-macos-latest-clang:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+
+      - name: Install Dependencies
+        run: brew install jansson zlib zstd
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DLIBTMJ_TEST=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON .
+
+      - name: Build
+        run: cmake --build .
+
+      - name: Test
+        run: ctest
+
+      - name: Create libtmj Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-latest-clang-libtmj-master
+          path: lib/*
+          if-no-files-found: error
+          retention-days: 1
 
   build-windows-latest-msvc:
     runs-on: windows-latest
@@ -76,8 +105,6 @@ jobs:
           path: lib/*
           if-no-files-found: error
           retention-days: 1
-#  build-macos-latest-clang:
-#    runs-on: macos-latest
 
   Pages:
     needs: [build-linux, build-windows-latest-msvc] #, build-macos-clang]
