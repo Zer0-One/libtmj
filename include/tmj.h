@@ -540,8 +540,8 @@ typedef enum TMJ_LOG_PRIORITY{
  *
  * @param debug If set to true, the given callback function will receive debug
  * messages and information in addition to the higher-priority messages.
- * @param callback A function that takes a LOG_PRIORITY and a char* and returns
- * nothing.
+ * @param callback A function that takes a TMJ_LOG_PRIORITY and a char* and
+ * returns nothing.
  */
 void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
 

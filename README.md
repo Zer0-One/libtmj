@@ -1,6 +1,6 @@
 # libtmj
 
-A library for loading Tiled maps in JSON format
+A library for loading [Tiled](https://www.mapeditor.org) maps in JSON format
 
 Bear in mind that this library is currently in beta and not yet stable.  If you
 find bugs, or find that the library is missing an important feature, please
@@ -98,7 +98,7 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-// Layers are oganized into a tree, so descend recursively
+// Layers are organized into a tree, so descend recursively
 void enumerate_layers(Layer* layers, size_t count){
     for(size_t i = 0; i < count; i++){
         printf("Layer %d: %s\n", layers[i].id, layers[i].name);
