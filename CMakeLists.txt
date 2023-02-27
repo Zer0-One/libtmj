@@ -82,7 +82,7 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 if(WIN32)
     set(CMAKE_C_FLAGS_DEBUG "-Z7")
 else()
-    set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -fsanitize=address")
+    set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -fsanitize=address -fsanitize=undefined") 
 endif()
 
 # If tests are enabled, make tests
