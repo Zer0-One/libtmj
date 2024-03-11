@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout Source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: 'true'
 
@@ -50,7 +50,7 @@ jobs:
 
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: 'true'
 
@@ -67,7 +67,7 @@ jobs:
         run: ctest
 
       - name: Create libtmj Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-latest-clang-libtmj-master
           path: lib/*
@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: 'true'
 
@@ -124,7 +124,7 @@ jobs:
         run: sudo apt-get install -y graphviz doxygen libjansson-dev zlib1g-dev libzstd-dev
 
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure CMake
         run: cmake -DCMAKE_BUILD_TYPE=Release -DLIBTMJ_DOCS=ON -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON .
@@ -133,9 +133,9 @@ jobs:
         run: cmake --build .
 
       - name: Create Docs Artifact
-        uses: actions/upload-pages-artifact@v1.0.4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: docs/html/
 
       - name: Publish Documentation
-        uses: actions/deploy-pages@v1.2.2
+        uses: actions/deploy-pages@v4
