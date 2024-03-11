@@ -195,7 +195,7 @@ Object* unpack_objects(json_t* objects){
                                   0,
                                   "{"
                                   "s?b, s?b, s:b,"
-                                  "s?s, s:s, s?s,"
+                                  "s:s, s?s, s?s,"
                                   "s?i, s:i,"
                                   "s:F, s:F, s:F, s:F, s:F,"
                                   "s?o"
@@ -203,9 +203,9 @@ Object* unpack_objects(json_t* objects){
                                   "ellipse", &ret[idx].ellipse,
                                   "point", &ret[idx].point,
                                   "visible", &ret[idx].visible,
-                                  "class", &ret[idx].class,
                                   "name", &ret[idx].name,
                                   "template", &ret[idx].template,
+                                  "type", &ret[idx].type,
                                   "gid", &ret[idx].gid,
                                   "id", &ret[idx].id,
                                   "height", &ret[idx].height,

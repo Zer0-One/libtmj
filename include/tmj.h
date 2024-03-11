@@ -84,29 +84,17 @@ typedef struct Text{
     int pixelsize;
 } Text;
 
-typedef enum OBJECT_TYPE{
-    OBJECT,
-    ELLIPSE,
-    RECTANGLE,
-    POINT,
-    POLYGON,
-    POLYLINE,
-    TEXT
-} object_type;
-
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#object
  */
 typedef struct Object {
-    object_type type;
-
     bool ellipse;
     bool point;
     bool visible;
 
-    char* class; // Optional
     char* name;
     char* template;
+    char* type; // Optional
 
     int gid;
     int id;
@@ -221,8 +209,8 @@ typedef struct Frame {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#tile-definition
  */
 typedef struct Tile {
-    char* class; // Optional
     char* image; // Optional
+    char* type; // Optional
 
     int id;
     int imageheight;

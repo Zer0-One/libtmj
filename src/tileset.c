@@ -247,8 +247,8 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                                   "s?F,"
                                   "s?o, s?o, s?o, s?o"
                                   "}",
-                                  "class", &ret->tiles[idx].class,
                                   "image", &ret->tiles[idx].image,
+                                  "type", &ret->tiles[idx].type,
                                   "id", &ret->tiles[idx].id,
                                   "imageheight", &ret->tiles[idx].imageheight,
                                   "imagewidth", &ret->tiles[idx].imagewidth,

@@ -137,7 +137,7 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
                     return NULL;
                 }
 
-                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Z_BUF_TMJ_LOG_ERROR");
+                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Z_BUF_ERROR");
             case Z_OK:
                 logmsg(TMJ_LOG_DEBUG, "Decode (zlib): inflate OK");
 
