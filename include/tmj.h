@@ -23,19 +23,18 @@ extern "C" {
  */
 typedef struct Property {
     char* name;
-    char* propertytype; //"When applicable", whatever the fuck that means
+    char* propertytype;
     char* type;
 
-    json_t* value; //To-Do: parse this out into an actual C value.
-    //union{
-    //    char* string_value;
-    //    int int_value;
-    //    double float_value;
-    //    bool bool_value;
-    //    char* color_value;
-    //    char* file_value;
-    //    int object_value;
-    //};
+    union{
+        char* value_string;
+        int value_int;
+        double value_float;
+        bool value_bool;
+        char* value_color;
+        char* value_file;
+        int value_object;
+    };
 } Property;
 
 /**
@@ -492,7 +491,6 @@ void tmj_map_free(Map* map);
  */
 void tmj_tileset_free(Tileset* tileset);
 
-
 /**
  * @ingroup tmj
  */
@@ -503,24 +501,6 @@ typedef enum TMJ_LOG_PRIORITY{
     TMJ_LOG_ERR,
     TMJ_LOG_CRIT
 } tmj_log_priority;
-
-////**
-// * @ingroup logging
-// * The LogMessage struct is sent in logging callbacks to provide the caller
-// * with debugging and error information.
-// */
-//typedef struct LogMessage{
-//    log_priority priority;
-//
-//    /*-----------*/
-//    // These fields are only included when debugging is enabled for the callback
-//    int line;
-//    char* file;
-//    char* func;
-//    /*-----------*/
-//
-//    const char* msg;
-//} LogMessage;
 
 /**
  * @ingroup tmj

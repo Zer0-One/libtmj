@@ -38,7 +38,7 @@ jobs:
       run: ctest
 
     - name: Create libtmj Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.os }}-${{ matrix.cc }}-libtmj-master
         path: lib/*
@@ -99,7 +99,7 @@ jobs:
         run: ctest -C Debug
 
       - name: Create libtmj Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-latest-msvc-libtmj-master
           path: lib/*
@@ -115,7 +115,8 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      #url: ${{ steps.deployment.outputs.page_url }}
+      url: https://zer0-one.github.io/libtmj/
 
     runs-on: ubuntu-latest
 

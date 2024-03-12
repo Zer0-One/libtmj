@@ -33,6 +33,8 @@ Property* unpack_properties(json_t* properties){
         return NULL;
     }
 
+    json_t* value;
+
     size_t idx = 0;
     json_t* property = NULL;
 
@@ -44,7 +46,7 @@ Property* unpack_properties(json_t* properties){
                                   "name", &ret[idx].name,
                                   "type", &ret[idx].type,
                                   "propertytype", &ret[idx].propertytype,
-                                  "value", &ret[idx].value
+                                  "value", &value
                                  );
 
         if(unpk == -1){
@@ -53,6 +55,91 @@ Property* unpack_properties(json_t* properties){
             free(ret);
 
             return NULL;
+        }
+
+        // note: string is default type, so missing field means string
+        if(ret[idx].type == NULL || strcmp(ret[idx].type, "string") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "s", &ret[idx].value_string);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack string value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "int") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "i", &ret[idx].value_int);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack integer value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "float") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "i", &ret[idx].value_float);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack float value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "bool") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "b", &ret[idx].value_bool);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack bool value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "color") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "s", &ret[idx].value_color);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack color value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "file") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "s", &ret[idx].value_file);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack file value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
+        }
+
+        if(strcmp(ret[idx].type, "object") == 0){
+            unpk = json_unpack_ex(value, &error, 0, "i", &ret[idx].value_object);
+
+            if(unpk == -1){
+                logmsg(TMJ_LOG_ERR, "Unable to unpack object value from property, %s at line %d column %d", error.text, error.line, error.column);
+
+                free(ret);
+
+                return NULL;
+            }
         }
     }
 
@@ -227,6 +314,12 @@ Object* unpack_objects(json_t* objects){
 
         //Unpack properties
         if(properties != NULL){
+            if(!json_is_array(properties)){
+                logmsg(TMJ_LOG_ERR, "'properties' must be an array");
+
+                goto fail_properties;
+            }
+
             ret[idx].properties = unpack_properties(properties);
 
             if(ret[idx].properties == NULL){
@@ -256,6 +349,12 @@ Object* unpack_objects(json_t* objects){
 
         // Unpack Polygon
         if(polygon != NULL){
+            if(!json_is_array(polygon)){
+                logmsg(TMJ_LOG_ERR, "'polygon' must be an array");
+
+                goto fail_polygon;
+            }
+
             ret[idx].polygon = unpack_points(polygon);
             
             if(ret[idx].polygon == NULL){
@@ -270,6 +369,12 @@ Object* unpack_objects(json_t* objects){
 
         // Unpack Polyline
         if(polyline != NULL){
+            if(!json_is_array(polyline)){
+                logmsg(TMJ_LOG_ERR, "'polyline' must be an array");
+
+                goto fail_polyline;
+            }
+
             ret[idx].polyline = unpack_points(polyline);
 
             if(ret[idx].polyline == NULL){

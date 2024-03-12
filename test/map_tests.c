@@ -31,15 +31,21 @@ void setUp(void){
 void tearDown(void){}
 
 char* testmap_path = "example/overworld.tmj";
+char* testmap_path2 = "example/testmap.tmj";
 
 Map* mf = NULL;
+Map* mf2 = NULL;
 Map* ms = NULL;
 
 void test_map_loadf(void){
     mf = tmj_map_loadf(testmap_path, true);
+    mf2 = tmj_map_loadf(testmap_path2, true);
     TEST_ASSERT_NOT_NULL(mf);
+    TEST_ASSERT_NOT_NULL(mf2);
     TEST_ASSERT_EQUAL_size_t(4, mf->layer_count);
     TEST_ASSERT_EQUAL_STRING("tilelayer", mf->layers[0].type);
+    TEST_ASSERT_EQUAL_STRING("bar", mf2->properties[0].value_string);
+    TEST_ASSERT_EQUAL_INT(1, mf2->properties[1].value_int);
 }
 
 void test_map_load(void){
@@ -65,6 +71,7 @@ void test_map_load(void){
 
 void test_map_free(void){
     tmj_map_free(mf);
+    tmj_map_free(mf2);
     tmj_map_free(ms);
 }
 

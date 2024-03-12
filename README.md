@@ -2,9 +2,8 @@
 
 A library for loading [Tiled](https://www.mapeditor.org) maps in JSON format
 
-Bear in mind that this library is currently in beta and not yet stable.  If you
-find bugs, or find that the library is missing an important feature, please
-file an issue.
+Bear in mind that this library is relatively new. If you find bugs, or find
+that the library is missing an important feature, please file an issue.
 
 ## Dependencies
 
@@ -38,6 +37,7 @@ Available cmake build options:
 Option              | Description
 ------------------- | -----------
 BUILD\_SHARED\_LIBS | Builds a shared library instead of a static library.
+CMAKE\_BUILD\_TYPE  | One of "Release" (optimization) or "Debug" (runtime sanitizers + debug symbols)
 LIBTMJ\_DOCS        | Also build documentation.
 LIBTMJ\_ZSTD        | Build zstd decompression routines.
 LIBTMJ\_ZLIB        | Build zlib and gzip decompression routines.
@@ -52,12 +52,12 @@ git submodule update --init
 
 To enable the test suite, invoke cmake with:
 ```
--DLIBTMJ_TEST=True
+-DCMAKE_BUILD_TYPE=Debug -DLIBTMJ_TEST=True
 ```
 Then run the tests with:
 ```
 ctest // For *nix
-ctest -C Release // For Windows
+ctest -C Debug // For Windows
 ```
 
 ## Usage example
@@ -134,7 +134,7 @@ int main(){
 
     BSD 2-Clause License
 
-    Copyright (c) 2023, David Zero
+    Copyright (c) 2023-2024, David Zero
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
