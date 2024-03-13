@@ -4,8 +4,8 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(tmj_log_priority priority, const char* msg){
-    switch(priority){
+void log_cb(tmj_log_priority priority, const char* msg) {
+    switch (priority) {
         case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
@@ -24,11 +24,11 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(void){
+void setUp(void) {
     tmj_log_regcb(true, log_cb);
 }
 
-void tearDown(void){}
+void tearDown(void) {}
 
 char* testmap_path = "example/overworld.tmj";
 char* testmap_path2 = "example/testmap.tmj";
@@ -37,7 +37,7 @@ Map* mf = NULL;
 Map* mf2 = NULL;
 Map* ms = NULL;
 
-void test_map_loadf(void){
+void test_map_loadf(void) {
     mf = tmj_map_loadf(testmap_path, true);
     mf2 = tmj_map_loadf(testmap_path2, true);
     TEST_ASSERT_NOT_NULL(mf);
@@ -45,10 +45,10 @@ void test_map_loadf(void){
     TEST_ASSERT_EQUAL_size_t(4, mf->layer_count);
     TEST_ASSERT_EQUAL_STRING("tilelayer", mf->layers[0].type);
     TEST_ASSERT_EQUAL_STRING("bar", mf2->properties[0].value_string);
-    TEST_ASSERT_EQUAL_INT(1, mf2->properties[1].value_int);
+    TEST_ASSERT_EQUAL_INT(1, mf2->properties[1].value_object);
 }
 
-void test_map_load(void){
+void test_map_load(void) {
     FILE* f = fopen(testmap_path, "rb");
 
     fseek(f, 0, SEEK_END);
@@ -69,13 +69,13 @@ void test_map_load(void){
     free(s);
 }
 
-void test_map_free(void){
+void test_map_free(void) {
     tmj_map_free(mf);
     tmj_map_free(mf2);
     tmj_map_free(ms);
 }
 
-int main(void){
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_map_loadf);
     RUN_TEST(test_map_load);

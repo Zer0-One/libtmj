@@ -2,8 +2,8 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(tmj_log_priority priority, const char* msg){
-    switch(priority){
+void log_cb(tmj_log_priority priority, const char* msg) {
+    switch (priority) {
         case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
@@ -22,20 +22,20 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(){
+void setUp() {
     tmj_log_regcb(true, log_cb);
 }
 
-void tearDown(){}
+void tearDown() {}
 
-void test_version(){
+void test_version() {
     TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_MAJOR, 0);
     TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_MINOR, 1);
     TEST_ASSERT_EQUAL_UINT(TMJ_VERSION_PATCH, 7);
     TEST_ASSERT_EQUAL_STRING(TMJ_VERSION, "0.1.0");
 }
 
-int main(){
+int main() {
     UNITY_BEGIN();
     RUN_TEST(test_version);
     return UNITY_END();

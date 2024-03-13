@@ -26,7 +26,7 @@ typedef struct Property {
     char* propertytype;
     char* type;
 
-    union{
+    union {
         char* value_string;
         int value_int;
         double value_float;
@@ -49,7 +49,7 @@ typedef struct Chunk {
     bool data_is_str;
     size_t data_count;
 
-    union{
+    union {
         char* data_str;
         unsigned int* data_uint;
     };
@@ -58,7 +58,7 @@ typedef struct Chunk {
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#point
  */
-typedef struct Point{
+typedef struct Point {
     double x;
     double y;
 } Point;
@@ -66,7 +66,7 @@ typedef struct Point{
 /**
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#text
  */
-typedef struct Text{
+typedef struct Text {
     bool bold;
     bool italic;
     bool kerning;
@@ -106,11 +106,11 @@ typedef struct Object {
 
     bool is_polygon;
 
-    union{
+    union {
         size_t polygon_point_count;
         size_t polyline_point_count;
     };
-    union{
+    union {
         Point* polygon;
         Point* polyline;
     };
@@ -142,16 +142,16 @@ typedef struct Layer {
 
     bool data_is_str;
     size_t data_count;
-    union{
+    union {
         unsigned int* data_uint;
         char* data_str;
-    }; //tilelayer only
+    }; // tilelayer only
 
     int height; // tilelayer only
     int id;
     int startx;
     int starty;
-    int width; //tilelayer only
+    int width; // tilelayer only
     int x;
     int y;
 
@@ -404,7 +404,6 @@ typedef struct ObjectTemplate {
     Object* object;
 } ObjectTemplate;
 
-
 /**
  * @defgroup tmj TMJ
  *
@@ -494,7 +493,7 @@ void tmj_tileset_free(Tileset* tileset);
 /**
  * @ingroup tmj
  */
-typedef enum TMJ_LOG_PRIORITY{
+typedef enum TMJ_LOG_PRIORITY {
     TMJ_LOG_DEBUG,
     TMJ_LOG_INFO,
     TMJ_LOG_WARNING,
@@ -512,7 +511,6 @@ typedef enum TMJ_LOG_PRIORITY{
  * returns nothing.
  */
 void tmj_log_regcb(bool debug, void (*callback)(tmj_log_priority, const char*));
-
 
 ///**
 // * @defgroup util Util
@@ -569,7 +567,7 @@ extern const char* const TMJ_VERSION;
  * https://doc.mapeditor.org/en/stable/reference/global-tile-ids/ for more
  * information. On failure, returns NULL.
  */
-uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size); 
+uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size);
 
 #ifdef __cplusplus
 }

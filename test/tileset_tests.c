@@ -4,8 +4,8 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(tmj_log_priority priority, const char* msg){
-    switch(priority){
+void log_cb(tmj_log_priority priority, const char* msg) {
+    switch (priority) {
         case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
@@ -24,23 +24,23 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(void){
+void setUp(void) {
     tmj_log_regcb(true, log_cb);
 }
 
-void tearDown(void){}
+void tearDown(void) {}
 
 char* tileset_path = "example/overworld.tsj";
 
 Tileset* tf = NULL;
 Tileset* ts = NULL;
 
-void test_tileset_loadf(void){
+void test_tileset_loadf(void) {
     tf = tmj_tileset_loadf(tileset_path, true);
     TEST_ASSERT_NOT_NULL(tf);
 }
 
-void test_tileset_load(void){
+void test_tileset_load(void) {
     FILE* f = fopen(tileset_path, "rb");
 
     fseek(f, 0, SEEK_END);
@@ -59,12 +59,12 @@ void test_tileset_load(void){
     free(s);
 }
 
-void test_tileset_free(void){
+void test_tileset_free(void) {
     tmj_tileset_free(tf);
     tmj_tileset_free(ts);
 }
 
-int main(void){
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_tileset_loadf);
     RUN_TEST(test_tileset_load);

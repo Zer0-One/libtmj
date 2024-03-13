@@ -5,8 +5,8 @@
 
 #include "Unity/src/unity.h"
 
-void log_cb(tmj_log_priority priority, const char* msg){
-    switch(priority){
+void log_cb(tmj_log_priority priority, const char* msg) {
+    switch (priority) {
         case TMJ_LOG_DEBUG:
             printf("DEBUG: %s\n", msg);
             break;
@@ -25,12 +25,12 @@ void log_cb(tmj_log_priority priority, const char* msg){
     }
 }
 
-void setUp(void){
+void setUp(void) {
     tmj_log_regcb(true, log_cb);
 }
-void tearDown(void){}
+void tearDown(void) {}
 
-void test_b64_decode(void){
+void test_b64_decode(void) {
     const char* msg = "VGhpcyBpcyBhIHRlc3Qgc3RyaW5nAA==";
     const char* msg2 = "VGhpcyBpcyBhbm90aGVyIHRlc3Qgc3RyaW5nIQA=";
 
@@ -52,7 +52,7 @@ void test_b64_decode(void){
 }
 
 #ifdef LIBTMJ_ZLIB
-void test_zlib_decode(void){
+void test_zlib_decode(void) {
     const char* msg_zlib = "eJwLycgsVgCixLz8kozUIoWS1OISheKSosy8dEUGAKBMCl4=";
     const char* msg_gzip = "H4sIAAAAAAAAAwvJyCxWAKLEvPySjNQihZLU4hKF4pKizLx0RQYAPCsnLx0AAAA=";
 
@@ -74,7 +74,7 @@ void test_zlib_decode(void){
 
     free(out);
 
-    TEST_ASSERT_EQUAL_INT(29, decompressed_size_zlib); //28 characters + 1 trailing NULL
+    TEST_ASSERT_EQUAL_INT(29, decompressed_size_zlib); // 28 characters + 1 trailing NULL
     TEST_ASSERT_EQUAL_INT(29, decompressed_size_gzip);
     TEST_ASSERT_EQUAL_STRING("This is another test string!", msg_zlib_decompressed);
     TEST_ASSERT_EQUAL_STRING("This is another test string!", msg_gzip_decompressed);
@@ -85,7 +85,7 @@ void test_zlib_decode(void){
 #endif
 
 #ifdef LIBTMJ_ZSTD
-void test_zstd_decode(void){
+void test_zstd_decode(void) {
     const char* msg = "KLUv/SQd6QAAVGhpcyBpcyBhbm90aGVyIHRlc3Qgc3RyaW5nIQDZN/8V";
 
     size_t dSize = 0;
@@ -103,7 +103,7 @@ void test_zstd_decode(void){
 }
 #endif
 
-int main(void){
+int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_b64_decode);
 #ifdef LIBTMJ_ZLIB

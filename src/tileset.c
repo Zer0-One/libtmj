@@ -10,10 +10,10 @@
  * @file
  */
 
-int unpack_tileset(json_t* tileset, Tileset* ret){
+int unpack_tileset(json_t* tileset, Tileset* ret) {
     logmsg(TMJ_LOG_DEBUG, "Unpacking tileset");
 
-    if(tileset == NULL){
+    if (tileset == NULL) {
         return -1;
     }
 
@@ -28,68 +28,88 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
 
     // Unpack scalar values
     int unpk = json_unpack_ex(tileset,
-                              &error,
-                              0,
-                              "{"
-                              "s?s, s?s, s?s, s:s, s:s, s?s, s?s, s:s, s?s, s?s, s:s, s:s,"
-                              "s:i, s?i, s:i, s:i, s:i, s:i, s:i, s:i, s:i,"
-                              "s?o, s?o, s?o, s?o, s?o, s?o"
-                              "}",
-                              "backgroundcolor", &ret->backgroundcolor,
-                              "class", &ret->class,
-                              "fillmode", &ret->fillmode,
-                              "image", &ret->image,
-                              "name", &ret->name,
-                              "objectalignment", &ret->objectalignment,
-                              "source", &ret->source,
-                              "tiledversion", &ret->tiledversion,
-                              "tilerendersize", &ret->tilerendersize,
-                              "transparentcolor", &ret->transparentcolor,
-                              "type", &ret->type,
-                              "version", &ret->version,
-                              "columns", &ret->columns,
-                              "firstgid", &ret->firstgid,
-                              "imageheight", &ret->imageheight,
-                              "imagewidth", &ret->imagewidth,
-                              "margin", &ret->margin,
-                              "spacing", &ret->spacing,
-                              "tilecount", &ret->tilecount,
-                              "tileheight", &ret->tileheight,
-                              "tilewidth", &ret->tilewidth,
-                              "grid", &grid,
-                              "tileoffset", &tileoffset,
-                              "transformations", &transformations,
-                              "properties", &properties,
-                              "terrains", &terrains,
-                              "tiles", &tiles
-                             );
+            &error,
+            0,
+            "{"
+            "s?s, s?s, s?s, s:s, s:s, s?s, s?s, s:s, s?s, s?s, s:s, s:s,"
+            "s:i, s?i, s:i, s:i, s:i, s:i, s:i, s:i, s:i,"
+            "s?o, s?o, s?o, s?o, s?o, s?o"
+            "}",
+            "backgroundcolor",
+            &ret->backgroundcolor,
+            "class",
+            &ret->class,
+            "fillmode",
+            &ret->fillmode,
+            "image",
+            &ret->image,
+            "name",
+            &ret->name,
+            "objectalignment",
+            &ret->objectalignment,
+            "source",
+            &ret->source,
+            "tiledversion",
+            &ret->tiledversion,
+            "tilerendersize",
+            &ret->tilerendersize,
+            "transparentcolor",
+            &ret->transparentcolor,
+            "type",
+            &ret->type,
+            "version",
+            &ret->version,
+            "columns",
+            &ret->columns,
+            "firstgid",
+            &ret->firstgid,
+            "imageheight",
+            &ret->imageheight,
+            "imagewidth",
+            &ret->imagewidth,
+            "margin",
+            &ret->margin,
+            "spacing",
+            &ret->spacing,
+            "tilecount",
+            &ret->tilecount,
+            "tileheight",
+            &ret->tileheight,
+            "tilewidth",
+            &ret->tilewidth,
+            "grid",
+            &grid,
+            "tileoffset",
+            &tileoffset,
+            "transformations",
+            &transformations,
+            "properties",
+            &properties,
+            "terrains",
+            &terrains,
+            "tiles",
+            &tiles);
 
-    if(unpk == -1){
+    if (unpk == -1) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset, %s at line %d column %d", error.text, error.line, error.column);
 
         return -1;
     }
 
     // Unpack Grid
-    if(grid){
+    if (grid) {
         ret->grid = calloc(1, sizeof(Grid));
 
-        if(ret->grid == NULL){
+        if (ret->grid == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->grid, the system is out of memory", ret->name);
 
             return -1;
         }
 
-        unpk = json_unpack_ex(grid,
-                              &error,
-                              0,
-                              "{s:i, s:s, s:i}",
-                              "height", &ret->grid->height,
-                              "orientation", &ret->grid->orientation,
-                              "width", &ret->grid->width
-                             );
+        unpk = json_unpack_ex(
+                grid, &error, 0, "{s:i, s:s, s:i}", "height", &ret->grid->height, "orientation", &ret->grid->orientation, "width", &ret->grid->width);
 
-        if(unpk == -1){
+        if (unpk == -1) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->grid, %s at line %d column %d", ret->name, error.text, error.line, error.column);
 
             goto fail_grid;
@@ -97,24 +117,18 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
     }
 
     // Unpack TileOffset
-    if(tileoffset){
+    if (tileoffset) {
         ret->tileoffset = calloc(1, sizeof(TileOffset));
 
-        if(ret->tileoffset == NULL){
+        if (ret->tileoffset == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tileoffset, the system is out of memory", ret->name);
 
             goto fail_grid;
         }
 
-        unpk = json_unpack_ex(tileoffset,
-                              &error,
-                              0,
-                              "{s:i, s:i}",
-                              "x", &ret->tileoffset->x,
-                              "y", &ret->tileoffset->y
-                             );
+        unpk = json_unpack_ex(tileoffset, &error, 0, "{s:i, s:i}", "x", &ret->tileoffset->x, "y", &ret->tileoffset->y);
 
-        if(unpk == -1){
+        if (unpk == -1) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tileoffset, %s at line %d column %d", ret->name, error.text, error.line, error.column);
 
             goto fail_tileoffset;
@@ -122,35 +136,43 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
     }
 
     // Unpack Transformations
-    if(transformations){
+    if (transformations) {
         ret->transformations = calloc(1, sizeof(Transformations));
 
-        if(ret->transformations == NULL){
+        if (ret->transformations == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->transformations, the system is out of memory", ret->name);
 
             goto fail_tileoffset;
         }
 
         unpk = json_unpack_ex(transformations,
-                              &error,
-                              0,
-                              "{s:b, s:b, s:b, s:b}",
-                              "hflip", &ret->transformations->hflip,
-                              "vfilp", &ret->transformations->vflip,
-                              "rotate", &ret->transformations->rotate,
-                              "preferuntransformed", &ret->transformations->preferuntransformed
-                             );
+                &error,
+                0,
+                "{s:b, s:b, s:b, s:b}",
+                "hflip",
+                &ret->transformations->hflip,
+                "vfilp",
+                &ret->transformations->vflip,
+                "rotate",
+                &ret->transformations->rotate,
+                "preferuntransformed",
+                &ret->transformations->preferuntransformed);
 
-        if(unpk == -1){
-            logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->transformations, %s at line %d column %d", ret->name, error.text, error.line, error.column);
+        if (unpk == -1) {
+            logmsg(TMJ_LOG_ERR,
+                    "Unable to unpack tileset[%s]->transformations, %s at line %d column %d",
+                    ret->name,
+                    error.text,
+                    error.line,
+                    error.column);
 
             goto fail_transformations;
         }
     }
 
     // Unpack Properties
-    if(properties){
-        if((ret->properties = unpack_properties(properties)) == NULL){
+    if (properties) {
+        if ((ret->properties = unpack_properties(properties)) == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->properties", ret->name);
 
             goto fail_transformations;
@@ -160,8 +182,8 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
     }
 
     // Unpack Terrains
-    if(terrains){
-        if(!json_is_array(terrains)){
+    if (terrains) {
+        if (!json_is_array(terrains)) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->terrains, terrains must be an array of Terrains", ret->name);
 
             goto fail_properties;
@@ -171,7 +193,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
 
         ret->terrains = calloc(ret->terrain_count, sizeof(Terrain));
 
-        if(ret->terrains == NULL){
+        if (ret->terrains == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->terrains, the system is out of memory", ret->name);
 
             goto fail_properties;
@@ -180,26 +202,33 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
         size_t idx;
         json_t* terrain;
 
-        json_array_foreach(terrains, idx, terrain){
+        json_array_foreach(terrains, idx, terrain) {
             properties = NULL;
 
             unpk = json_unpack_ex(terrain,
-                                  &error,
-                                  0,
-                                  "{s:s, s:i, s?o}",
-                                  "name", &ret->terrains[idx].name,
-                                  "tile", &ret->terrains[idx].tile,
-                                  "properties", &properties
-                                 );
+                    &error,
+                    0,
+                    "{s:s, s:i, s?o}",
+                    "name",
+                    &ret->terrains[idx].name,
+                    "tile",
+                    &ret->terrains[idx].tile,
+                    "properties",
+                    &properties);
 
-            if(unpk == -1){
-                logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->terrains, %s at line %d column %d", ret->name, error.text, error.line, error.column);
+            if (unpk == -1) {
+                logmsg(TMJ_LOG_ERR,
+                        "Unable to unpack tileset[%s]->terrains, %s at line %d column %d",
+                        ret->name,
+                        error.text,
+                        error.line,
+                        error.column);
 
                 goto fail_terrains;
             }
 
-            if(properties){
-                if((ret->terrains[idx].properties = unpack_properties(properties)) == NULL){
+            if (properties) {
+                if ((ret->terrains[idx].properties = unpack_properties(properties)) == NULL) {
                     logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->terrain[%s]->properties", ret->name, ret->terrains[idx].name);
 
                     goto fail_terrains;
@@ -211,8 +240,8 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
     }
 
     // Unpack Tiles
-    if(tiles){
-        if(!json_is_array(tiles)){
+    if (tiles) {
+        if (!json_is_array(tiles)) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles, tiles must be an array of Tiles", ret->name);
 
             goto fail_terrains;
@@ -222,7 +251,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
 
         ret->tiles = calloc(ret->tile_count, sizeof(Tile));
 
-        if(ret->tiles == NULL){
+        if (ret->tiles == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles, the system is out of memory", ret->name);
 
             goto fail_tiles;
@@ -231,7 +260,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
         size_t idx = 0;
         json_t* tile = NULL;
 
-        json_array_foreach(tiles, idx, tile){
+        json_array_foreach(tiles, idx, tile) {
             // Unpack Tile scalar values
             json_t* animation = NULL;
             json_t* objectgroup = NULL;
@@ -239,42 +268,58 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
             json_t* terrain = NULL;
 
             unpk = json_unpack_ex(tile,
-                                  &error,
-                                  0,
-                                  "{"
-                                  "s?s, s?s,"
-                                  "s:i, s?i, s?i, s?i, s?i, s?i, s?i,"
-                                  "s?F,"
-                                  "s?o, s?o, s?o, s?o"
-                                  "}",
-                                  "image", &ret->tiles[idx].image,
-                                  "type", &ret->tiles[idx].type,
-                                  "id", &ret->tiles[idx].id,
-                                  "imageheight", &ret->tiles[idx].imageheight,
-                                  "imagewidth", &ret->tiles[idx].imagewidth,
-                                  "x", &ret->tiles[idx].x,
-                                  "y", &ret->tiles[idx].y,
-                                  "width", &ret->tiles[idx].width,
-                                  "height", &ret->tiles[idx].height,
-                                  "probability", &ret->tiles[idx].probability,
-                                  "animation", &animation,
-                                  "objectgroup", &objectgroup,
-                                  "properties", &properties,
-                                  "terrain", &terrain
-                                 );
+                    &error,
+                    0,
+                    "{"
+                    "s?s, s?s,"
+                    "s:i, s?i, s?i, s?i, s?i, s?i, s?i,"
+                    "s?F,"
+                    "s?o, s?o, s?o, s?o"
+                    "}",
+                    "image",
+                    &ret->tiles[idx].image,
+                    "type",
+                    &ret->tiles[idx].type,
+                    "id",
+                    &ret->tiles[idx].id,
+                    "imageheight",
+                    &ret->tiles[idx].imageheight,
+                    "imagewidth",
+                    &ret->tiles[idx].imagewidth,
+                    "x",
+                    &ret->tiles[idx].x,
+                    "y",
+                    &ret->tiles[idx].y,
+                    "width",
+                    &ret->tiles[idx].width,
+                    "height",
+                    &ret->tiles[idx].height,
+                    "probability",
+                    &ret->tiles[idx].probability,
+                    "animation",
+                    &animation,
+                    "objectgroup",
+                    &objectgroup,
+                    "properties",
+                    &properties,
+                    "terrain",
+                    &terrain);
 
-            if(unpk == -1){
+            if (unpk == -1) {
                 logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles, %s at line %d column %d", ret->name, error.text, error.line, error.column);
 
                 goto fail_tiles;
             }
 
             // Unpack Tile objectgroup
-            if(objectgroup){
+            if (objectgroup) {
                 ret->tiles[idx].objectgroup = calloc(1, sizeof(Layer));
 
-                if(ret->tiles[idx].objectgroup == NULL){
-                    logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->objectgroup, the system is out of memory", ret->name, ret->tiles[idx].id);
+                if (ret->tiles[idx].objectgroup == NULL) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->objectgroup, the system is out of memory",
+                            ret->name,
+                            ret->tiles[idx].id);
 
                     goto fail_tiles;
                 }
@@ -283,44 +328,66 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                 json_t* layer_properties = NULL;
 
                 unpk = json_unpack_ex(objectgroup,
-                                      &error,
-                                      0,
-                                      "{"
-                                      "s?b, s:b,"
-                                      "s?s, s?s, s:s, s?s, s:s,"
-                                      "s?i, s?i, s?i,"
-                                      "s?F, s?F, s:F, s?F, s?F,"
-                                      "s?o, s?o"
-                                      "}",
-                                      "locked", &ret->tiles[idx].objectgroup->locked,
-                                      "visible", &ret->tiles[idx].objectgroup->visible,
-                                      "class", &ret->tiles[idx].objectgroup->class,
-                                      "draworder", &ret->tiles[idx].objectgroup->draworder,
-                                      "name", &ret->tiles[idx].objectgroup->name,
-                                      "tintcolor", &ret->tiles[idx].objectgroup->tintcolor,
-                                      "type", &ret->tiles[idx].objectgroup->type,
-                                      "id", &ret->tiles[idx].objectgroup->id,
-                                      "x", &ret->tiles[idx].objectgroup->x,
-                                      "y", &ret->tiles[idx].objectgroup->y,
-                                      "offsetx", &ret->tiles[idx].objectgroup->offsetx,
-                                      "offsety", &ret->tiles[idx].objectgroup->offsety,
-                                      "opacity", &ret->tiles[idx].objectgroup->opacity,
-                                      "parallaxx", &ret->tiles[idx].objectgroup->parallaxx,
-                                      "parallaxy", &ret->tiles[idx].objectgroup->parallaxy,
-                                      "objects", &objects,
-                                      "properties", &layer_properties
-                                      );
+                        &error,
+                        0,
+                        "{"
+                        "s?b, s:b,"
+                        "s?s, s?s, s:s, s?s, s:s,"
+                        "s?i, s?i, s?i,"
+                        "s?F, s?F, s:F, s?F, s?F,"
+                        "s?o, s?o"
+                        "}",
+                        "locked",
+                        &ret->tiles[idx].objectgroup->locked,
+                        "visible",
+                        &ret->tiles[idx].objectgroup->visible,
+                        "class",
+                        &ret->tiles[idx].objectgroup->class,
+                        "draworder",
+                        &ret->tiles[idx].objectgroup->draworder,
+                        "name",
+                        &ret->tiles[idx].objectgroup->name,
+                        "tintcolor",
+                        &ret->tiles[idx].objectgroup->tintcolor,
+                        "type",
+                        &ret->tiles[idx].objectgroup->type,
+                        "id",
+                        &ret->tiles[idx].objectgroup->id,
+                        "x",
+                        &ret->tiles[idx].objectgroup->x,
+                        "y",
+                        &ret->tiles[idx].objectgroup->y,
+                        "offsetx",
+                        &ret->tiles[idx].objectgroup->offsetx,
+                        "offsety",
+                        &ret->tiles[idx].objectgroup->offsety,
+                        "opacity",
+                        &ret->tiles[idx].objectgroup->opacity,
+                        "parallaxx",
+                        &ret->tiles[idx].objectgroup->parallaxx,
+                        "parallaxy",
+                        &ret->tiles[idx].objectgroup->parallaxy,
+                        "objects",
+                        &objects,
+                        "properties",
+                        &layer_properties);
 
-                if(unpk == -1){
-                    logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->objectgroup, %s at line %d column %d", ret->name, ret->tiles[idx].id, error.text, error.line, error.column);
+                if (unpk == -1) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->objectgroup, %s at line %d column %d",
+                            ret->name,
+                            ret->tiles[idx].id,
+                            error.text,
+                            error.line,
+                            error.column);
 
                     goto fail_tiles;
                 }
 
-                if(objects){
+                if (objects) {
                     ret->tiles[idx].objectgroup->objects = unpack_objects(objects);
 
-                    if(ret->tiles[idx].objectgroup->objects == NULL){
+                    if (ret->tiles[idx].objectgroup->objects == NULL) {
                         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->objectgroup->objects", ret->name, ret->tiles[idx].id);
 
                         goto fail_tiles;
@@ -329,10 +396,10 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                     ret->tiles[idx].objectgroup->object_count = json_array_size(objects);
                 }
 
-                if(layer_properties){
+                if (layer_properties) {
                     ret->tiles[idx].objectgroup->properties = unpack_properties(layer_properties);
 
-                    if(ret->tiles[idx].objectgroup->properties == NULL){
+                    if (ret->tiles[idx].objectgroup->properties == NULL) {
                         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->objectgroup->properties", ret->name, ret->tiles[idx].id);
 
                         goto fail_tiles;
@@ -343,17 +410,23 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
             }
 
             // Unpack Tile animation
-            if(animation){
-                if(!json_is_array(animation)){
-                    logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->animation, animation must be an array of Frames", ret->name, ret->tiles[idx].id);
+            if (animation) {
+                if (!json_is_array(animation)) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->animation, animation must be an array of Frames",
+                            ret->name,
+                            ret->tiles[idx].id);
 
                     goto fail_tiles;
                 }
 
                 ret->tiles[idx].animation = calloc(json_array_size(animation), sizeof(Frame));
 
-                if(ret->tiles[idx].animation == NULL){
-                    logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->animation, the system is out of memory", ret->name, ret->tiles[idx].id);
+                if (ret->tiles[idx].animation == NULL) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->animation, the system is out of memory",
+                            ret->name,
+                            ret->tiles[idx].id);
 
                     goto fail_tiles;
                 }
@@ -361,19 +434,26 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                 size_t idx2 = 0;
                 json_t* frame = NULL;
 
-                json_array_foreach(animation, idx2, frame){
+                json_array_foreach(animation, idx2, frame) {
                     unpk = json_unpack_ex(frame,
-                                          &error,
-                                          0,
-                                          "{"
-                                          "s:i, s:i"
-                                          "}",
-                                          "duration", &ret->tiles[idx].animation[idx2].duration,
-                                          "tileid", &ret->tiles[idx].animation[idx2].tileid
-                                         );
+                            &error,
+                            0,
+                            "{"
+                            "s:i, s:i"
+                            "}",
+                            "duration",
+                            &ret->tiles[idx].animation[idx2].duration,
+                            "tileid",
+                            &ret->tiles[idx].animation[idx2].tileid);
 
-                    if(unpk == -1){
-                        logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->animation, %s at line %d column %d", ret->name, ret->tiles[idx].id, error.text, error.line, error.column);
+                    if (unpk == -1) {
+                        logmsg(TMJ_LOG_ERR,
+                                "Unable to unpack tileset[%s]->tiles[%d]->animation, %s at line %d column %d",
+                                ret->name,
+                                ret->tiles[idx].id,
+                                error.text,
+                                error.line,
+                                error.column);
 
                         goto fail_tiles;
                     }
@@ -383,10 +463,10 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
             }
 
             // Unpack Tile properties
-            if(properties){
+            if (properties) {
                 ret->tiles[idx].properties = unpack_properties(properties);
 
-                if(ret->tiles[idx].properties == NULL){
+                if (ret->tiles[idx].properties == NULL) {
                     logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->properties", ret->name, ret->tiles[idx].id);
 
                     goto fail_tiles;
@@ -396,9 +476,13 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
             }
 
             // Unpack Tile terrain
-            if(terrain){
-                if(!json_is_array(terrain)){
-                    logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain must be an array of terrain indexes", ret->name, ret->tiles[idx].id);
+            if (terrain) {
+                if (!json_is_array(terrain)) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain must be an array of terrain "
+                            "indexes",
+                            ret->name,
+                            ret->tiles[idx].id);
 
                     goto fail_tiles;
                 }
@@ -406,9 +490,11 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
                 size_t idx2 = 0;
                 json_t* terrain_idx = NULL;
 
-                json_array_foreach(terrain, idx2, terrain_idx){
-                    if(!json_is_integer(terrain_idx)){
-                        logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain must be an array of integers");
+                json_array_foreach(terrain, idx2, terrain_idx) {
+                    if (!json_is_integer(terrain_idx)) {
+                        logmsg(TMJ_LOG_ERR,
+                                "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain must be an array of "
+                                "integers");
 
                         goto fail_tiles;
                     }
@@ -422,9 +508,9 @@ int unpack_tileset(json_t* tileset, Tileset* ret){
     return 0;
 
 fail_tiles:
-    for(size_t i = 0; i < ret->tile_count; i++){
+    for (size_t i = 0; i < ret->tile_count; i++) {
         free(ret->tiles[i].animation);
-        if(ret->tiles[i].objectgroup != NULL){
+        if (ret->tiles[i].objectgroup != NULL) {
             free(ret->tiles[i].objectgroup->properties);
             free_objects(ret->tiles[i].objectgroup->objects, ret->tiles[i].objectgroup->object_count);
         }
@@ -435,7 +521,7 @@ fail_tiles:
     free(ret->tiles);
 
 fail_terrains:
-    for(size_t i = 0; i < ret->terrain_count; i++){
+    for (size_t i = 0; i < ret->terrain_count; i++) {
         free(ret->terrains[i].properties);
     }
 
@@ -459,13 +545,13 @@ fail_grid:
 /**
  * Helper function for freeing tilesets embedded in maps
  */
-void tilesets_free(Tileset* tilesets, size_t tileset_count){
-    for(size_t i = 0; i < tileset_count; i++){
+void tilesets_free(Tileset* tilesets, size_t tileset_count) {
+    for (size_t i = 0; i < tileset_count; i++) {
         // Free tiles
-        if(tilesets[i].tiles){
-            for(size_t j = 0; j < tilesets[i].tile_count; j++){
+        if (tilesets[i].tiles) {
+            for (size_t j = 0; j < tilesets[i].tile_count; j++) {
                 free(tilesets[i].tiles[j].animation);
-                if(tilesets[i].tiles[j].objectgroup != NULL){
+                if (tilesets[i].tiles[j].objectgroup != NULL) {
                     free(tilesets[i].tiles[j].objectgroup->properties);
                     free_objects(tilesets[i].tiles[j].objectgroup->objects, tilesets[i].tiles[j].objectgroup->object_count);
                 }
@@ -477,8 +563,8 @@ void tilesets_free(Tileset* tilesets, size_t tileset_count){
         }
 
         // Free terrains
-        if(tilesets[i].terrains){
-            for(size_t j = 0; j < tilesets[i].terrain_count; j++){
+        if (tilesets[i].terrains) {
+            for (size_t j = 0; j < tilesets[i].terrain_count; j++) {
                 free(tilesets[i].terrains[j].properties);
             }
 
@@ -497,19 +583,19 @@ void tilesets_free(Tileset* tilesets, size_t tileset_count){
     free(tilesets);
 }
 
-Tileset* tmj_tileset_loadf(const char* path, bool check_extension){
+Tileset* tmj_tileset_loadf(const char* path, bool check_extension) {
     logmsg(TMJ_LOG_DEBUG, "Loading JSON tileset file '%s'", path);
 
     char* ext = strrchr(path, '.');
 
-    if(check_extension){
-        if(ext == NULL){
+    if (check_extension) {
+        if (ext == NULL) {
             logmsg(TMJ_LOG_ERR, "Tileset filename '%s' has no extension", path);
 
             return NULL;
         }
 
-        if(strcmp(ext, ".tsj") != 0 && strcmp(ext, ".json") != 0){
+        if (strcmp(ext, ".tsj") != 0 && strcmp(ext, ".json") != 0) {
             logmsg(TMJ_LOG_ERR, "Tileset filename '%s' has unknown extension, '%s'", path, ext);
             logmsg(TMJ_LOG_ERR, "Tileset filename '%s' must have '.tsj' or '.json' extension to be loaded", path);
 
@@ -520,7 +606,7 @@ Tileset* tmj_tileset_loadf(const char* path, bool check_extension){
     json_error_t error;
     json_t* root = json_load_file(path, JSON_REJECT_DUPLICATES, &error);
 
-    if(root == NULL){
+    if (root == NULL) {
         logmsg(TMJ_LOG_ERR, "Could not load tileset '%s', %s at line %d column %d", path, error.text, error.line, error.column);
 
         return NULL;
@@ -528,13 +614,13 @@ Tileset* tmj_tileset_loadf(const char* path, bool check_extension){
 
     Tileset* ret = calloc(1, sizeof(Tileset));
 
-    if(ret == NULL){
+    if (ret == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to load tileset[%s], the system is out of memory", path);
 
         return NULL;
     }
 
-    if(unpack_tileset(root, ret) == -1){
+    if (unpack_tileset(root, ret) == -1) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]", path);
 
         free(ret);
@@ -547,13 +633,13 @@ Tileset* tmj_tileset_loadf(const char* path, bool check_extension){
     return ret;
 }
 
-Tileset* tmj_tileset_load(const char* tileset){
+Tileset* tmj_tileset_load(const char* tileset) {
     logmsg(TMJ_LOG_DEBUG, "Loading JSON tileset from string");
 
     json_error_t error;
     json_t* root = json_loads(tileset, JSON_REJECT_DUPLICATES, &error);
 
-    if(root == NULL){
+    if (root == NULL) {
         logmsg(TMJ_LOG_ERR, "Could not load tileset, %s at line %d column %d", error.text, error.line, error.column);
 
         return NULL;
@@ -561,13 +647,13 @@ Tileset* tmj_tileset_load(const char* tileset){
 
     Tileset* ret = calloc(1, sizeof(Tileset));
 
-    if(ret == NULL){
+    if (ret == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to load tileset, the system is out of memory");
 
         return NULL;
     }
 
-    if(unpack_tileset(root, ret) == -1){
+    if (unpack_tileset(root, ret) == -1) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset");
 
         free(ret);
@@ -580,6 +666,6 @@ Tileset* tmj_tileset_load(const char* tileset){
     return ret;
 }
 
-void tmj_tileset_free(Tileset* tileset){
+void tmj_tileset_free(Tileset* tileset) {
     tilesets_free(tileset, 1);
 }

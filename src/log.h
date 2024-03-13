@@ -46,8 +46,7 @@ void logmsg(tmj_log_priority priority, char* msg, ...);
 // * @param msg      A printf-style format string for the message to be logged
 // * @param ...      Format string arguments for the previous argument. See printf() for detail.
 // */
-//void log_event(int loglevel, int line, char* file, char* func, char* msg, ...);
-
+// void log_event(int loglevel, int line, char* file, char* func, char* msg, ...);
 
 ///**
 // * @ingroup logging
@@ -57,6 +56,6 @@ void logmsg(tmj_log_priority priority, char* msg, ...);
 // * The expected arguments are identical to that of log_event(). See the
 // * documentation for log_event() for detail.
 // */
-//#define logmsg(loglevel, ...) log_event(loglevel, __LINE__, __FILE__, __func__, msg, __VA_ARGS__);
+// #define logmsg(loglevel, ...) log_event(loglevel, __LINE__, __FILE__, __func__, msg, __VA_ARGS__);
 
 #endif

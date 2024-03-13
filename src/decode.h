@@ -64,5 +64,4 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
  */
 uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size);
 
-
 #endif
