@@ -35,7 +35,7 @@ void logmsg(tmj_log_priority priority, char* msg, ...) {
 
     va_start(args, msg);
 
-    vsnprintf(logmsg_buf, LOGMSG_BUFSIZE, msg, args);
+    vsnprintf(logmsg_buf, LOGMSG_BUFSIZE, msg, args); // NOLINT(clang-analyzer-valist.Uninitialized)
 
     va_end(args);
 

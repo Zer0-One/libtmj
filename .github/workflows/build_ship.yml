@@ -17,10 +17,25 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang-format
 
       - name: Run Formatting
-        run: clang-format -i include/* src/*.c src/*.h
+        run: clang-format -i include/* src/*.h src/*.c
 
       - name: Check Formatting
         run: git diff --exit-code
+
+  clang-tidy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name : Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy libjansson-dev zlib1g-dev libzstd-dev
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE=Debug -DLIBTMJ_ZSTD=ON -DLIBTMJ_ZLIB=ON .
+
+      - name: Tidy
+        run: clang-tidy include/* src/*.h src/*.c
 
   build-linux:
     name: build-${{ matrix.os }}-${{ matrix.cc }}

@@ -1,0 +1,10 @@
+---
+#-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling: Poorly supported Microsoft shit, not implemented by GCC afaict
+#-bugprone-easily-swappable-parameters: you're not my real dad, you can't tell me how to order my parameters
+Checks: >
+  bugprone-*,
+  concurrency-*,
+  performance-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-assignment-in-if-condition,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling

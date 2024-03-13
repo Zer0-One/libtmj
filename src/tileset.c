@@ -254,7 +254,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
         if (ret->tiles == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles, the system is out of memory", ret->name);
 
-            goto fail_tiles;
+            goto fail_terrains;
         }
 
         size_t idx = 0;
@@ -499,7 +499,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                         goto fail_tiles;
                     }
 
-                    ret->tiles[idx].terrain[idx2] = json_integer_value(terrain_idx);
+                    ret->tiles[idx].terrain[idx2] = (int)json_integer_value(terrain_idx);
                 }
             }
         }
@@ -510,10 +510,12 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
 fail_tiles:
     for (size_t i = 0; i < ret->tile_count; i++) {
         free(ret->tiles[i].animation);
+
         if (ret->tiles[i].objectgroup != NULL) {
             free(ret->tiles[i].objectgroup->properties);
             free_objects(ret->tiles[i].objectgroup->objects, ret->tiles[i].objectgroup->object_count);
         }
+
         free(ret->tiles[i].objectgroup);
         free(ret->tiles[i].properties);
     }

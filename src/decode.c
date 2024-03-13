@@ -87,7 +87,7 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
     stream.avail_in = data_size;
     stream.avail_out = INFLATE_BLOCK_SIZE;
 
-    stream.next_in = data;
+    stream.next_in = data; // NOLINT(clang-diagnostic-incompatible-pointer-types-discards-qualifiers)
     stream.next_out = out;
 
     // 15 + 32 for zlib and gzip decoding with automatic header detection, according to the manual
@@ -213,7 +213,7 @@ fail_zlib:
 
 // clang-format off
 const char b64_encode_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-const char b64_decode_table[] = { 255, 255, 255, 255, 255, 255, 255, 255, 255,
+const unsigned char b64_decode_table[] = { 255, 255, 255, 255, 255, 255, 255, 255, 255,
 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 255, 255, 62, 255, 255, 255, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255,

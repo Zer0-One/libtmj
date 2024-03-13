@@ -2,6 +2,7 @@
 *.swp
 bin/
 example/
+compile_commands.json
 todo.txt
 
 # Doxygen

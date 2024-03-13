@@ -130,6 +130,15 @@ int main(){
 }
 ```
 
+## Notes
+
+JSON only defines a single number type, meant to accomodate both floating point
+values and integers of arbitrary length. This library truncates all input
+integers to the size of `int` on your platform, and all input floating point
+numbers to the size of `double` on your platform. My estimation is that this is
+acceptable for a Tiled map. If you find a case in which this breaks your map,
+please let me know.
+
 ## License
 
     BSD 2-Clause License

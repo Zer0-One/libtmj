@@ -9,6 +9,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY lib)
 
+# Export compile commands
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Set options
 option(LIBTMJ_TEST "Enable unit tests" OFF)
 option(LIBTMJ_DOCS "Enable compiling documentation" OFF)
