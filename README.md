@@ -143,7 +143,7 @@ please let me know.
 
     BSD 2-Clause License
 
-    Copyright (c) 2023-2024, David Zero
+    Copyright (c) 2023-2025, David Zero
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

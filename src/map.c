@@ -650,9 +650,14 @@ Layer* unpack_layers(json_t* layers) {
                     &error,
                     0,
                     "{"
+                    "s:i, s:i,"
                     "s:b, s:b,"
                     "s:s, s?s"
                     "}",
+                    "imageheight",
+                    &ret[idx].imageheight,
+                    "imagewidth",
+                    &ret[idx].imagewidth,
                     "repeatx",
                     &ret[idx].repeatx,
                     "repeaty",
