@@ -149,8 +149,8 @@ typedef struct Layer {
 
     int height; // tilelayer only
     int id;
-    int imageheight;
-    int imagewidth;
+    int imageheight; // imagelayer only
+    int imagewidth; // imagelayer only
     int startx;
     int starty;
     int width; // tilelayer only
