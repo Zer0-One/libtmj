@@ -881,7 +881,9 @@ void layers_free(Layer* layers, size_t layer_count) {
         free_objects(layers[i].objects, layers[i].object_count);
         free_chunks(layers[i].chunks, layers[i].chunk_count);
         free(layers[i].properties);
-        free(layers[i].data_uint);
+        if (!layers[i].data_is_str) {
+          free(layers[i].data_uint);
+        }
 
         layers_free(layers[i].layers, layers[i].layer_count);
     }
