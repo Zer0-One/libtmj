@@ -31,6 +31,12 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     size_t dsize2 = 0;
     uint8_t* dat2 = NULL;
 
+    if (strlen(compression) == 0) {
+        dat2 = malloc(dsize);
+        memcpy(dat2, dat, dsize);
+        dsize2 = dsize;
+    }
+
     if (strcmp(compression, "zlib") == 0 || strcmp(compression, "gzip") == 0) {
 #ifndef LIBTMJ_ZLIB
         logmsg(TMJ_LOG_ERR, "Layer data encoded with %s, but libtmj was not compiled with %s support", compression, compression);
