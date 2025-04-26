@@ -293,7 +293,7 @@ Object* unpack_objects(json_t* objects) {
                 "s:s, s?s, s?s,"
                 "s?i, s:i,"
                 "s:F, s:F, s:F, s:F, s:F,"
-                "s?o"
+                "s?o, s?o, s?o, s?o"
                 "}",
                 "ellipse",
                 &ret[idx].ellipse,
