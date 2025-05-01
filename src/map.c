@@ -216,8 +216,7 @@ Text* unpack_text(json_t* text) {
             0,
             "{"
             "s?b, s?b, s?b, s?b, s?b, s?b,"
-            "s?s, s?s?, s?s, s:s, s?s,"
-            "s?i,"
+            "s?s, s?s, s?s, s:s, s?s, s?i"
             "}",
             "bold",
             &ret->bold,
