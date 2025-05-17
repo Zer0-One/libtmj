@@ -13,4 +13,6 @@ EXPORTS
     tmj_decode_layer
     tmj_zstd_decompress
     tmj_zlib_decompress
+    tmj_zlib_compress
     tmj_b64_decode
+    tmj_b64_encode

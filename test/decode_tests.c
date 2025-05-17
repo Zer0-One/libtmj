@@ -51,6 +51,20 @@ void test_b64_decode(void) {
     free(out2);
 }
 
+void test_b64_encode(void) {
+    const char* msg = "This is a test string";
+    const char* msg2 = "This is another test string!";
+
+    char* out = tmj_b64_encode((uint8_t*)msg, 22);
+    char* out2 = tmj_b64_encode((uint8_t*)msg2, 29);
+
+    TEST_ASSERT_EQUAL_STRING("VGhpcyBpcyBhIHRlc3Qgc3RyaW5nAA==", out);
+    TEST_ASSERT_EQUAL_STRING("VGhpcyBpcyBhbm90aGVyIHRlc3Qgc3RyaW5nIQA=", out2);
+
+    free(out);
+    free(out2);
+}
+
 #ifdef LIBTMJ_ZLIB
 void test_zlib_decode(void) {
     const char* msg_zlib = "eJwLycgsVgCixLz8kozUIoWS1OISheKSosy8dEUGAKBMCl4=";
@@ -82,6 +96,21 @@ void test_zlib_decode(void) {
     free(msg_zlib_decompressed);
     free(msg_gzip_decompressed);
 }
+
+void test_zlib_encode(void) {
+    const char* msg_zlib = "This is another test string!";
+
+    size_t compressed_size_zlib = 0;
+    uint8_t* msg_zlib_compressed = tmj_zlib_compress((uint8_t*)msg_zlib, 29, -1, &compressed_size_zlib);
+
+    char* out = tmj_b64_encode((uint8_t*)msg_zlib_compressed, compressed_size_zlib);
+    TEST_ASSERT_NOT_NULL(out);
+    free(msg_zlib_compressed);
+
+    TEST_ASSERT_EQUAL_STRING("eJwLycgsVgCixLz8kozUIoWS1OISheKSosy8dEUGAKBMCl4=", out);
+
+    free(out);
+}
 #endif
 
 #ifdef LIBTMJ_ZSTD
@@ -106,8 +135,10 @@ void test_zstd_decode(void) {
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(test_b64_decode);
+    RUN_TEST(test_b64_encode);
 #ifdef LIBTMJ_ZLIB
     RUN_TEST(test_zlib_decode);
+    RUN_TEST(test_zlib_encode);
 #endif
 #ifdef LIBTMJ_ZSTD
     RUN_TEST(test_zstd_decode);

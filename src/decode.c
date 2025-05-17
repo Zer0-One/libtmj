@@ -207,6 +207,137 @@ fail_zlib:
     return NULL;
 }
 
+uint8_t* tmj_zlib_compress(const uint8_t* data, size_t data_size, int level, size_t* compressed_size) {
+    logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Compressing buffer of size %zu", data_size);
+
+    if (data == NULL) {
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Cannot compress NULL buffer");
+
+        return NULL;
+    }
+
+    const size_t DEFLATE_BLOCK_SIZE = 262144;
+
+    uint8_t* out = malloc(DEFLATE_BLOCK_SIZE);
+
+    if (out == NULL) {
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to allocate buffer for compressed data, the system is out of memory");
+
+        return NULL;
+    }
+
+    z_stream stream = {0};
+
+    stream.zalloc = Z_NULL;
+    stream.zfree = Z_NULL;
+    stream.opaque = Z_NULL;
+
+    stream.avail_in = data_size;
+    stream.avail_out = DEFLATE_BLOCK_SIZE;
+
+    stream.next_in = data; // NOLINT(clang-diagnostic-incompatible-pointer-types-discards-qualifiers)
+    stream.next_out = out;
+
+    int ret = deflateInit(&stream, level);
+
+    switch (ret) {
+        case Z_OK:
+            logmsg(TMJ_LOG_DEBUG, "Decode (zlib): deflate initialization OK");
+            break;
+
+        case Z_MEM_ERROR:
+            logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to initialize deflate, the system is out of memory");
+
+            goto fail_zlib;
+
+        case Z_VERSION_ERROR:
+            logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to initialize deflate, incompatible zlib library version");
+
+            goto fail_zlib;
+
+        case Z_STREAM_ERROR:
+            logmsg(TMJ_LOG_ERR,
+                    "Decode (zlib): Unable to initialize deflate, invalid parameter(s) to deflate initialization "
+                    "routine");
+
+            goto fail_zlib;
+
+        default:
+            goto fail_zlib;
+    }
+
+    size_t realloc_scale = 2;
+
+    // Iteratively deflate, growing the output buffer by 1 block each time we run out of space
+    int flush = Z_NO_FLUSH;
+    int stat = deflate(&stream, flush);
+
+    while (stat != Z_STREAM_END) {
+        switch (stat) {
+            case Z_BUF_ERROR:
+                if (stream.avail_out != 0) {
+                    logmsg(TMJ_LOG_ERR, "Decode (zlib): No progress possible");
+
+                    return NULL;
+                }
+
+                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Z_BUF_ERROR");
+            case Z_OK:
+                logmsg(TMJ_LOG_DEBUG, "Decode (zlib): deflate OK");
+
+                if (stream.avail_out == 0) { // more space needed
+                    out = realloc(out, DEFLATE_BLOCK_SIZE * realloc_scale);
+                    if (out == NULL) {
+                        logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to grow deflate output buffer, the system is out memory");
+
+                        return NULL;
+                    }
+
+                    stream.avail_out = DEFLATE_BLOCK_SIZE;
+
+                    stream.next_out = out + stream.total_out;
+
+                    realloc_scale++;
+                } else { // finished!
+                    flush = Z_FINISH;
+                }
+
+                break;
+
+            case Z_STREAM_ERROR:
+                logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to complete deflate, stream structure inconsistent");
+
+                goto fail_zlib;
+
+            default:
+                goto fail_zlib;
+        }
+
+        stat = deflate(&stream, flush);
+    }
+
+    logmsg(TMJ_LOG_DEBUG, "Decode (zlib): Completed deflate, %zd bytes written to output buffer", stream.total_out);
+
+    if (deflateEnd(&stream) != Z_OK) {
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): Completed deflate, but could not clean up; stream state was inconsistent");
+
+        goto fail_zlib;
+    }
+
+    *compressed_size = stream.total_out;
+
+    return out;
+
+fail_zlib:
+    free(out);
+
+    if (stream.msg) {
+        logmsg(TMJ_LOG_ERR, "Decode (zlib): zlib error: '%s'", stream.msg);
+    }
+
+    return NULL;
+}
+
 #endif
 
 // Thanks to John's article for explaining Base64: https://nachtimwald.com/2017/11/18/base64-encode-and-decode-in-c/
@@ -276,14 +407,6 @@ bool b64_is_valid_char(char c) {
     return false;
 }
 
-// Don't need this yet, so it'll stay unimplemented for now
-/**
- * Unimplemented, but may be useful to implement in the future.
- */
-char* tmj_b64_encode(uint8_t* data) {
-    return NULL;
-}
-
 uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size) {
     if (data == NULL) {
         logmsg(TMJ_LOG_ERR, "Decode (b64): Unable to decode null input");
@@ -337,6 +460,51 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size) {
     }
 
     *decoded_size = dSize;
+
+    return out;
+}
+
+size_t b64_encoded_size(size_t inlen) {
+    size_t ret;
+
+    ret = inlen;
+    if (inlen % 3 != 0)
+        ret += 3 - (inlen % 3);
+    ret /= 3;
+    ret *= 4;
+
+    return ret;
+}
+
+char* tmj_b64_encode(uint8_t* data, size_t size) {
+    if (data == NULL || size == 0) {
+        logmsg(TMJ_LOG_ERR, "Encode (b64): Unable to encode null input");
+
+        return NULL;
+    }
+
+    size_t enc_size = b64_encoded_size(size);
+    char* out = malloc(enc_size + 1);
+    out[enc_size] = '\0';
+
+    for (size_t i = 0, j = 0; i < size; i += 3, j += 4) {
+        size_t v = data[i];
+        v = i + 1 < size ? v << 8 | data[i + 1] : v << 8;
+        v = i + 2 < size ? v << 8 | data[i + 2] : v << 8;
+
+        out[j] = b64_encode_table[(v >> 18) & 0x3F];
+        out[j + 1] = b64_encode_table[(v >> 12) & 0x3F];
+        if (i + 1 < size) {
+            out[j + 2] = b64_encode_table[(v >> 6) & 0x3F];
+        } else {
+            out[j + 2] = '=';
+        }
+        if (i + 2 < size) {
+            out[j + 3] = b64_encode_table[v & 0x3F];
+        } else {
+            out[j + 3] = '=';
+        }
+    }
 
     return out;
 }
