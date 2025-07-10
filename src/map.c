@@ -430,7 +430,7 @@ void free_objects(Object* objects, size_t object_count) {
     free(objects);
 }
 
-Chunk* unpack_chunks(json_t* chunks) {
+Chunk* unpack_chunks(json_t* chunks, size_t* chunk_count) {
     if (chunks == NULL) {
         return NULL;
     }
@@ -443,9 +443,9 @@ Chunk* unpack_chunks(json_t* chunks) {
 
     json_error_t error;
 
-    size_t chunk_count = json_array_size(chunks);
+    *chunk_count = json_array_size(chunks);
 
-    Chunk* ret = calloc(chunk_count, sizeof(Chunk));
+    Chunk* ret = calloc(*chunk_count, sizeof(Chunk));
 
     if (ret == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack chunks, the system is out of memory");
@@ -526,7 +526,7 @@ Chunk* unpack_chunks(json_t* chunks) {
     return ret;
 
 fail_data:
-    for (size_t i = 0; i < chunk_count; i++) {
+    for (size_t i = 0; i < *chunk_count; i++) {
         if (!ret[i].data_is_str) {
             free(ret[i].data_uint);
         }
@@ -703,8 +703,17 @@ Layer* unpack_layers(json_t* layers) {
             }
         }
 
-        // Unpack data
+        // If a tilelayer, make sure we have one of the "data" or "chunks" fields
         if (strcmp(ret[idx].type, "tilelayer") == 0) {
+            if (!json_object_get(layer, "data") && !json_object_get(layer, "chunks")) {
+                logmsg(TMJ_LOG_ERR, "Could not unpack layer[%d], missing 'data' and 'chunks' fields", ret[idx].id);
+
+                goto fail_layer;
+            }
+        }
+
+        // Unpack data
+        if (strcmp(ret[idx].type, "tilelayer") == 0 && json_object_get(layer, "data")) {
             json_t* data = NULL;
 
             unpk = json_unpack_ex(layer, &error, 0, "{s:o}", "data", &data);
@@ -786,7 +795,7 @@ Layer* unpack_layers(json_t* layers) {
             }
 
             if (chunks != NULL) {
-                ret[idx].chunks = unpack_chunks(chunks);
+                ret[idx].chunks = unpack_chunks(chunks, &ret[idx].chunk_count);
 
                 if (ret[idx].chunks == NULL) {
                     logmsg(TMJ_LOG_ERR, "Unable to unpack layer[%d]->chunks", ret[idx].id);

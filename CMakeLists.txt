@@ -93,11 +93,13 @@ if(LIBTMJ_TEST)
     enable_testing()
 
     add_executable(map_tests test/map_tests.c test/Unity/src/unity.c)
+    add_executable(infinite_map_tests test/infinite_map_tests.c test/Unity/src/unity.c)
     add_executable(tileset_tests test/tileset_tests.c test/Unity/src/unity.c)
     add_executable(decode_tests test/decode_tests.c test/Unity/src/unity.c)
     #add_executable(util_tests test/util_tests.c test/Unity/src/unity.c)
 
     target_link_libraries(map_tests tmj jansson::jansson)
+    target_link_libraries(infinite_map_tests tmj jansson::jansson)
     target_link_libraries(tileset_tests tmj jansson::jansson)
     target_link_libraries(decode_tests tmj jansson::jansson)
     #target_link_libraries(util_tests tmj jansson::jansson)
@@ -110,11 +112,13 @@ if(LIBTMJ_TEST)
     endif()
 
     set_target_properties(map_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
+    set_target_properties(infinite_map_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
     set_target_properties(tileset_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
     set_target_properties(decode_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
     #set_target_properties(util_tests PROPERTIES RUNTIME_OUTPUT_DIRECTORY test/bin)
 
     add_test(NAME map_tests COMMAND test/bin/map_tests)
+    add_test(NAME infinite_map_tests COMMAND test/bin/infinite_map_tests)
     add_test(NAME tileset_tests COMMAND test/bin/tileset_tests)
     add_test(NAME decode_tests COMMAND test/bin/decode_tests)
     #add_test(NAME util_tests COMMAND test/bin/util_tests)
@@ -123,6 +127,8 @@ if(LIBTMJ_TEST)
     # no clue where to find anything
     if(WIN32)
         set_tests_properties(map_tests PROPERTIES ENVIRONMENT_MODIFICATION
+            PATH=path_list_append:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+        set_tests_properties(infinite_map_tests PROPERTIES ENVIRONMENT_MODIFICATION
             PATH=path_list_append:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
         set_tests_properties(tileset_tests PROPERTIES ENVIRONMENT_MODIFICATION
             PATH=path_list_append:${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
