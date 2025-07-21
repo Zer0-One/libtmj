@@ -139,6 +139,10 @@ numbers to the size of `double` on your platform. My estimation is that this is
 acceptable for a Tiled map. If you find a case in which this breaks your map,
 please let me know.
 
+If you use libtmj in a game or tool, I would love to hear about it. Please reach
+out via email or create a pull request to give your game/project a mention in
+the README.
+
 ## License
 
     BSD 2-Clause License
