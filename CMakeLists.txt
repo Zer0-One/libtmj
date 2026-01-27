@@ -55,9 +55,10 @@ target_compile_definitions(tmj PUBLIC
     LIBTMJ_VERSION="${PROJECT_VERSION}"
 )
 
+
 # Control symbol visibility
 if(NOT WIN32 AND NOT APPLE)
-    target_link_options(tmj PRIVATE "LINKER:--version-script=src/tmj.sym")
+    target_link_options(tmj PRIVATE "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/src/tmj.sym")
 endif()
 
 # Set include directories
