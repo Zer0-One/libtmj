@@ -136,6 +136,8 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
                 if (stream.avail_out != 0) {
                     logmsg(TMJ_LOG_ERR, "Decode (zlib): No progress possible");
 
+                    free(out);
+
                     return NULL;
                 }
 
@@ -143,12 +145,17 @@ uint8_t* tmj_zlib_decompress(const uint8_t* data, size_t data_size, size_t* deco
             case Z_OK:
                 logmsg(TMJ_LOG_DEBUG, "Decode (zlib): inflate OK");
 
-                out = realloc(out, INFLATE_BLOCK_SIZE * realloc_scale);
-                if (out == NULL) {
+                void* tmp = realloc(out, INFLATE_BLOCK_SIZE * realloc_scale);
+
+                if (tmp == NULL) {
                     logmsg(TMJ_LOG_ERR, "Decode (zlib): Unable to grow inflate output buffer, the system is out memory");
+
+                    free(out);
 
                     return NULL;
                 }
+
+                out = tmp;
 
                 stream.avail_out = INFLATE_BLOCK_SIZE;
 
@@ -381,6 +388,10 @@ size_t b64_decode_size(const char* data) {
 
     size_t len = strlen(data);
 
+    if (len == 0) {
+        return 0;
+    }
+
     size_t ret = len / 4 * 3;
 
     // Check to see if the last 2 characters are padding bytes
@@ -485,6 +496,13 @@ char* tmj_b64_encode(uint8_t* data, size_t size) {
 
     size_t enc_size = b64_encoded_size(size);
     char* out = malloc(enc_size + 1);
+
+    if (out == NULL) {
+        logmsg(TMJ_LOG_ERR, "Encode (b64): Unable to allocate output buffer, the system is out of memory");
+
+        return NULL;
+    }
+
     out[enc_size] = '\0';
 
     for (size_t i = 0, j = 0; i < size; i += 3, j += 4) {

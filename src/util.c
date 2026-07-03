@@ -33,6 +33,13 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 
     if (strlen(compression) == 0) {
         dat2 = malloc(dsize);
+
+        if (dat2 == NULL) {
+            logmsg(TMJ_LOG_ERR, "Could not allocate buffer for decoded layer data, the system is out of memory");
+
+            goto fail;
+        }
+
         memcpy(dat2, dat, dsize);
         dsize2 = dsize;
     }
@@ -41,7 +48,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 #ifndef LIBTMJ_ZLIB
         logmsg(TMJ_LOG_ERR, "Layer data encoded with %s, but libtmj was not compiled with %s support", compression, compression);
 
-        return NULL;
+        goto fail;
 #endif
 // This ifdef is only here to shut up the compiler warnings
 #ifdef LIBTMJ_ZLIB
@@ -53,7 +60,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
 #ifndef LIBTMJ_ZSTD
         logmsg(TMJ_LOG_ERR, "Layer data encoded with zstd, but libtmj was not compiled with zstd support");
 
-        return NULL;
+        goto fail;
 #endif
 #ifdef LIBTMJ_ZSTD
         dat2 = tmj_zstd_decompress(dat, dsize, &dsize2);
@@ -63,9 +70,7 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     if (dat2 == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to decompress %s encoded layer data", compression);
 
-        free(dat);
-
-        return NULL;
+        goto fail;
     }
 
     free(dat);
@@ -73,4 +78,8 @@ uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* c
     *size = dsize2 / 4;
 
     return (uint32_t*)dat2;
+
+fail:
+    free(dat);
+    return NULL;
 }

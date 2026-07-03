@@ -151,7 +151,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                 "{s:b, s:b, s:b, s:b}",
                 "hflip",
                 &ret->transformations->hflip,
-                "vfilp",
+                "vflip",
                 &ret->transformations->vflip,
                 "rotate",
                 &ret->transformations->rotate,
@@ -487,6 +487,15 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                     goto fail_tiles;
                 }
 
+                if (json_array_size(terrain) > 4) {
+                    logmsg(TMJ_LOG_ERR,
+                            "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain cannot be more than 4 elements",
+                            ret->name,
+                            ret->tiles[idx].id);
+
+                    goto fail_tiles;
+                }
+
                 size_t idx2 = 0;
                 json_t* terrain_idx = NULL;
 
@@ -494,7 +503,9 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                     if (!json_is_integer(terrain_idx)) {
                         logmsg(TMJ_LOG_ERR,
                                 "Unable to unpack tileset[%s]->tiles[%d]->terrain, terrain must be an array of "
-                                "integers");
+                                "integers",
+                                ret->name,
+                                ret->tiles[idx].id);
 
                         goto fail_tiles;
                     }

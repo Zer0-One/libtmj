@@ -1,6 +1,7 @@
 {
-    global:
-        tmj_*;
-        TMJ_*;
-    local: *;
+global:
+    tmj_*;
+    TMJ_*;
+local:
+    *;
 };

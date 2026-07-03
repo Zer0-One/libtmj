@@ -42,7 +42,7 @@ Property* unpack_properties(json_t* properties) {
         int unpk = json_unpack_ex(property,
                 &error,
                 0,
-                "{s:s, s?s, s?s, s:o}",
+                "{s:s, s:s, s?s, s:o}",
                 "name",
                 &ret[idx].name,
                 "type",
@@ -60,8 +60,7 @@ Property* unpack_properties(json_t* properties) {
             return NULL;
         }
 
-        // note: string is default type, so missing field means string
-        if (ret[idx].type == NULL || strcmp(ret[idx].type, "string") == 0) {
+        if (strcmp(ret[idx].type, "string") == 0) {
             unpk = json_unpack_ex(value, &error, 0, "s", &ret[idx].value_string);
 
             if (unpk == -1) {
@@ -86,7 +85,7 @@ Property* unpack_properties(json_t* properties) {
         }
 
         if (strcmp(ret[idx].type, "float") == 0) {
-            unpk = json_unpack_ex(value, &error, 0, "i", &ret[idx].value_float);
+            unpk = json_unpack_ex(value, &error, 0, "F", &ret[idx].value_float);
 
             if (unpk == -1) {
                 logmsg(TMJ_LOG_ERR, "Unable to unpack float value from property, %s at line %d column %d", error.text, error.line, error.column);
@@ -260,6 +259,8 @@ Object* unpack_objects(json_t* objects) {
 
     if (!json_is_array(objects)) {
         logmsg(TMJ_LOG_ERR, "'objects' must be an array");
+
+        return NULL;
     }
 
     json_error_t error;
@@ -331,6 +332,8 @@ Object* unpack_objects(json_t* objects) {
 
         if (unpk == -1) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
+
+            free(ret);
 
             return NULL;
         }
@@ -1077,14 +1080,14 @@ Map* map_load_json(json_t* root, const char* path) {
                 goto fail_tilesets;
             }
         }
-
-        map->tileset_count = tileset_count;
     }
+
+    map->tileset_count = tileset_count;
 
     return map;
 
 fail_tilesets:
-    tilesets_free(map->tilesets, map->tileset_count);
+    tilesets_free(map->tilesets, idx);
 
 fail_layers:
     layers_free(map->layers, map->layer_count);
