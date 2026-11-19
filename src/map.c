@@ -210,6 +210,7 @@ Text* unpack_text(json_t* text) {
         return NULL;
     }
 
+    int bold = 0, italic = 0, kerning = 0, strikeout = 0, underline = 0, wrap = 0;
     int unpk = json_unpack_ex(text,
             &error,
             0,
@@ -218,17 +219,17 @@ Text* unpack_text(json_t* text) {
             "s?s, s?s, s?s, s:s, s?s, s?i"
             "}",
             "bold",
-            &ret->bold,
+            &bold,
             "italic",
-            &ret->italic,
+            &italic,
             "kerning",
-            &ret->kerning,
+            &kerning,
             "strikeout",
-            &ret->strikeout,
+            &strikeout,
             "underline",
-            &ret->underline,
+            &underline,
             "wrap",
-            &ret->wrap,
+            &wrap,
             "color",
             &ret->color,
             "fontfamily",
@@ -241,6 +242,14 @@ Text* unpack_text(json_t* text) {
             &ret->valign,
             "pixelsize",
             &ret->pixelsize);
+
+    ret->bold = bold != 0;
+    ret->italic = italic != 0;
+    ret->kerning = kerning != 0;
+    ret->strikeout = strikeout != 0;
+    ret->underline = underline != 0;
+    ret->wrap = wrap != 0;
+
     if (unpk == -1) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack text, %s at line %d column %d", error.text, error.line, error.column);
 
@@ -285,6 +294,7 @@ Object* unpack_objects(json_t* objects) {
         json_t* polyline = NULL;
 
         // Unpack scalar values
+        int ellipse = 0, point = 0, visible = 0;
         int unpk = json_unpack_ex(object,
                 &error,
                 0,
@@ -296,11 +306,11 @@ Object* unpack_objects(json_t* objects) {
                 "s?o, s?o, s?o, s?o"
                 "}",
                 "ellipse",
-                &ret[idx].ellipse,
+                &ellipse,
                 "point",
-                &ret[idx].point,
+                &point,
                 "visible",
-                &ret[idx].visible,
+                &visible,
                 "name",
                 &ret[idx].name,
                 "template",
@@ -329,6 +339,10 @@ Object* unpack_objects(json_t* objects) {
                 &polygon,
                 "polyline",
                 &polyline);
+
+        ret[idx].ellipse = ellipse != 0;
+        ret[idx].point = point != 0;
+        ret[idx].visible = visible != 0;
 
         if (unpk == -1) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack object, %s at line %d column %d", error.text, error.line, error.column);
@@ -602,6 +616,7 @@ Layer* unpack_layers(json_t* layers) {
         }
 
         // Unpack scalar values
+        int locked = 0, visible = 0;
         unpk = json_unpack_ex(layer,
                 &error,
                 0,
@@ -612,9 +627,9 @@ Layer* unpack_layers(json_t* layers) {
                 "s?F, s?F, s:F, s?F, s?F"
                 "}",
                 "locked",
-                &ret[idx].locked,
+                &locked,
                 "visible",
-                &ret[idx].visible,
+                &visible,
                 "class",
                 &ret[idx].class,
                 "name",
@@ -640,6 +655,9 @@ Layer* unpack_layers(json_t* layers) {
                 "parallaxy",
                 &ret[idx].parallaxy);
 
+        ret[idx].locked = locked != 0;
+        ret[idx].visible = visible != 0;
+
         if (unpk == -1) {
             logmsg(TMJ_LOG_ERR, "Could not unpack layer[%d], %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
 
@@ -647,6 +665,7 @@ Layer* unpack_layers(json_t* layers) {
         }
 
         // Unpack conditional scalar values
+        int repeatx = 0, repeaty = 0;
         if (strcmp(ret[idx].type, "imagelayer") == 0) {
             unpk = json_unpack_ex(layer,
                     &error,
@@ -661,13 +680,16 @@ Layer* unpack_layers(json_t* layers) {
                     "imagewidth",
                     &ret[idx].imagewidth,
                     "repeatx",
-                    &ret[idx].repeatx,
+                    &repeatx,
                     "repeaty",
-                    &ret[idx].repeaty,
+                    &repeaty,
                     "image",
                     &ret[idx].image,
                     "transparentcolor",
                     &ret[idx].transparentcolor);
+
+            ret[idx].repeatx = repeatx != 0;
+            ret[idx].repeaty = repeaty != 0;
 
             if (unpk == -1) {
                 logmsg(TMJ_LOG_ERR, "Could not unpack layer[%d], %s at line %d column %d", ret[idx].id, error.text, error.line, error.column);
@@ -935,6 +957,7 @@ Map* map_load_json(json_t* root, const char* path) {
     json_t* properties = NULL;
 
     // Unpack scalar values
+    int infinite = 0;
     unpk = json_unpack_ex(root,
             &error,
             0,
@@ -946,7 +969,7 @@ Map* map_load_json(json_t* root, const char* path) {
             "s:o, s:o, s?o"
             "}",
             "infinite",
-            &map->infinite,
+            &infinite,
             "backgroundcolor",
             &map->backgroundcolor,
             "class",
@@ -983,6 +1006,8 @@ Map* map_load_json(json_t* root, const char* path) {
             &layers,
             "properties",
             &properties);
+
+    map->infinite = infinite != 0;
 
     if (unpk == -1) {
         logmsg(TMJ_LOG_ERR, "Could not unpack map[%s], %s at line %d, column %d", path, error.text, error.line, error.column);

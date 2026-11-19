@@ -145,18 +145,24 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
             goto fail_tileoffset;
         }
 
+        int hflip = 0, vflip = 0, rotate = 0, preferuntransformed = 0;
         unpk = json_unpack_ex(transformations,
                 &error,
                 0,
                 "{s:b, s:b, s:b, s:b}",
                 "hflip",
-                &ret->transformations->hflip,
+                &hflip,
                 "vflip",
-                &ret->transformations->vflip,
+                &vflip,
                 "rotate",
-                &ret->transformations->rotate,
+                &rotate,
                 "preferuntransformed",
-                &ret->transformations->preferuntransformed);
+                &preferuntransformed);
+
+        ret->transformations->hflip = hflip != 0;
+        ret->transformations->vflip = vflip != 0;
+        ret->transformations->rotate = rotate != 0;
+        ret->transformations->preferuntransformed = preferuntransformed != 0;
 
         if (unpk == -1) {
             logmsg(TMJ_LOG_ERR,
@@ -327,6 +333,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                 json_t* objects = NULL;
                 json_t* layer_properties = NULL;
 
+                int locked = 0, visible = 0;
                 unpk = json_unpack_ex(objectgroup,
                         &error,
                         0,
@@ -338,9 +345,9 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                         "s?o, s?o"
                         "}",
                         "locked",
-                        &ret->tiles[idx].objectgroup->locked,
+                        &locked,
                         "visible",
-                        &ret->tiles[idx].objectgroup->visible,
+                        &visible,
                         "class",
                         &ret->tiles[idx].objectgroup->class,
                         "draworder",
@@ -371,6 +378,9 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                         &objects,
                         "properties",
                         &layer_properties);
+
+                ret->tiles[idx].objectgroup->locked = locked != 0;
+                ret->tiles[idx].objectgroup->visible = visible != 0;
 
                 if (unpk == -1) {
                     logmsg(TMJ_LOG_ERR,
