@@ -865,6 +865,7 @@ Layer* unpack_layers(json_t* layers) {
 
             if (json_is_array(nested_layers) && json_array_size(nested_layers) > 0) {
                 ret[idx].layers = unpack_layers(nested_layers);
+                ret[idx].layer_count = json_array_size(nested_layers);
 
                 if (ret[idx].layers == NULL) {
                     logmsg(TMJ_LOG_ERR, "Unable to unpack layer[%d]->layers", ret[idx].id);
