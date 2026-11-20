@@ -406,18 +406,6 @@ size_t b64_decode_size(const char* data) {
     return ret;
 }
 
-bool b64_is_valid_char(char c) {
-    if (isalnum(c)) {
-        return true;
-    }
-
-    if (c == '+' || c == '/' || c == '=') {
-        return true;
-    }
-
-    return false;
-}
-
 uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size) {
     if (data == NULL) {
         logmsg(TMJ_LOG_ERR, "Decode (b64): Unable to decode null input");
@@ -444,13 +432,23 @@ uint8_t* tmj_b64_decode(const char* data, size_t* decoded_size) {
 
     // Validate the input
     for (size_t i = 0; i < len; i++) {
-        if (!b64_is_valid_char(data[i])) {
-            logmsg(TMJ_LOG_ERR, "Decode (b64): Invalid Base64 character, '%c'", data[i]);
-
-            free(out);
-
-            return NULL;
+        if (isalnum(data[i])) {
+            continue;
         }
+
+        if (data[i] == '+' || data[i] == '/') {
+            continue;
+        }
+
+        if ((i == len - 1 || i == len - 2) && data[i] == '=') {
+            continue;
+        }
+
+        logmsg(TMJ_LOG_ERR, "Decode (b64): Invalid Base64 character, '%c'", data[i]);
+
+        free(out);
+
+        return NULL;
     }
 
     for (size_t i = 0, j = 0; i < len; i += 4, j += 3) {
