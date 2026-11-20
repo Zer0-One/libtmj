@@ -354,12 +354,6 @@ Object* unpack_objects(json_t* objects) {
 
         // Unpack properties
         if (properties != NULL) {
-            if (!json_is_array(properties)) {
-                logmsg(TMJ_LOG_ERR, "'properties' must be an array");
-
-                goto fail_properties;
-            }
-
             ret[idx].properties = unpack_properties(properties);
 
             if (ret[idx].properties == NULL) {
@@ -396,6 +390,7 @@ Object* unpack_objects(json_t* objects) {
             }
 
             ret[idx].polygon_point_count = json_array_size(polygon);
+            ret[idx].is_polygon = true;
 
             // No need to unpack a polyline if this object was a polygon
             continue;
@@ -511,9 +506,9 @@ Chunk* unpack_chunks(json_t* chunks, size_t* chunk_count) {
 
             ret[idx].data_is_str = true;
         } else if (json_is_array(data)) {
-            size_t datum_count = json_array_size(data);
+            ret[idx].data_count = json_array_size(data);
 
-            ret[idx].data_uint = calloc(datum_count, sizeof(unsigned int));
+            ret[idx].data_uint = calloc(ret[idx].data_count, sizeof(unsigned int));
 
             if (ret[idx].data_uint == NULL) {
                 logmsg(TMJ_LOG_ERR, "Unable to unpack chunk data, the system is out memory");
@@ -1040,6 +1035,7 @@ Map* map_load_json(json_t* root, const char* path) {
     // Unpack properties
     if (properties != NULL) {
         map->properties = unpack_properties(properties);
+        map->property_count = json_array_size(properties);
 
         if (map->properties == NULL) {
             logmsg(TMJ_LOG_ERR, "Unable to unpack map[%s]->properties", path);
