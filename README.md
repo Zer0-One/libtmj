@@ -66,9 +66,11 @@ Below is a brief example of how to use libtmj. For more detail, see the [API
 documentation](https://zer0-one.github.io/libtmj/). Specifically, refer to the
 [Data Structures](https://zer0-one.github.io/libtmj/annotated.html) page for a
 list of fields provided by each structure. They match the names given in the
-Tiled documentation, with the exception of added fields which give the number
-of elements in array fields, whose names are `{field}_count` (as shown below
-for the "layer" field).
+Tiled documentation, with two exceptions:
+1. There are extra fields which give the number of elements in array fields,
+   whose names are `{field}_count` (as shown below for the "layer" field).
+2. 'class' and 'template' fields have been renamed to 'class_' and 'template_'
+   to avoid clashing with reserved words in C++.
 
 ```
 #include <stdbool.h>

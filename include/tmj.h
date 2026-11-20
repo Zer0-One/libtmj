@@ -92,7 +92,7 @@ typedef struct Object {
     bool visible;
 
     char* name;
-    char* template;
+    char* template_;
     char* type; // Optional
 
     int gid;
@@ -130,7 +130,7 @@ typedef struct Layer {
     bool repeaty; // Imagelayer only
     bool visible;
 
-    char* class; // Optional
+    char* class_; // Optional
     char* compression; // tilelayer only
     char* draworder; // objectgroup only
     char* encoding; // tilelayer only
@@ -247,7 +247,7 @@ typedef struct WangTile {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-color
  */
 typedef struct WangColor {
-    char* class;
+    char* class_;
     char* color;
     char* name;
 
@@ -263,7 +263,7 @@ typedef struct WangColor {
  * https://doc.mapeditor.org/en/stable/reference/json-map-format/#wang-set
  */
 typedef struct WangSet {
-    char* class; // Optional
+    char* class_; // Optional
     char* name;
     char* type;
 
@@ -310,7 +310,7 @@ typedef struct Tileset {
     json_t* root; // NULL for embedded tilesets; only set for external tilesets
 
     char* backgroundcolor; // Optional
-    char* class; // Optional
+    char* class_; // Optional
     char* fillmode;
     char* image;
     char* name;
@@ -364,7 +364,7 @@ typedef struct Map {
     bool infinite;
 
     char* backgroundcolor; // Optional
-    char* class; // Optional
+    char* class_; // Optional
     char* orientation;
     char* renderorder; // Orthogonal maps only
     char* staggeraxis; // Staggered/hexagonal maps only

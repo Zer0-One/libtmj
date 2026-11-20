@@ -41,7 +41,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
             "backgroundcolor",
             &ret->backgroundcolor,
             "class",
-            &ret->class,
+            &ret->class_,
             "fillmode",
             &ret->fillmode,
             "image",
@@ -363,7 +363,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                         "visible",
                         &visible,
                         "class",
-                        &ret->tiles[idx].objectgroup->class,
+                        &ret->tiles[idx].objectgroup->class_,
                         "draworder",
                         &ret->tiles[idx].objectgroup->draworder,
                         "name",
@@ -690,6 +690,8 @@ Tileset* tmj_tileset_load(const char* tileset) {
     if (ret == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to load tileset, the system is out of memory");
 
+        json_decref(root);
+
         return NULL;
     }
 
@@ -697,6 +699,7 @@ Tileset* tmj_tileset_load(const char* tileset) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset");
 
         free(ret);
+        json_decref(root);
 
         return NULL;
     }

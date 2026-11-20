@@ -319,7 +319,7 @@ Object* unpack_objects(json_t* objects) {
                 "name",
                 &ret[idx].name,
                 "template",
-                &ret[idx].template,
+                &ret[idx].template_,
                 "type",
                 &ret[idx].type,
                 "gid",
@@ -633,7 +633,7 @@ Layer* unpack_layers(json_t* layers) {
                 "visible",
                 &visible,
                 "class",
-                &ret[idx].class,
+                &ret[idx].class_,
                 "name",
                 &ret[idx].name,
                 "tintcolor",
@@ -701,7 +701,6 @@ Layer* unpack_layers(json_t* layers) {
         } else if (strcmp(ret[idx].type, "tilelayer") == 0) {
             ret[idx].encoding = "csv";
             ret[idx].compression = "";
-            ret[idx].draworder = "topdown";
             unpk = json_unpack_ex(layer,
                     &error,
                     0,
@@ -724,6 +723,7 @@ Layer* unpack_layers(json_t* layers) {
                 goto fail_layer;
             }
         } else if (strcmp(ret[idx].type, "objectgroup") == 0) {
+            ret[idx].draworder = "topdown";
             unpk = json_unpack_ex(layer, &error, 0, "{s?s}", "draworder", &ret[idx].draworder);
 
             if (unpk == -1) {
@@ -806,6 +806,7 @@ Layer* unpack_layers(json_t* layers) {
 
         if (properties != NULL) {
             ret[idx].properties = unpack_properties(properties);
+            ret[idx].property_count = json_array_size(properties);
 
             if (ret[idx].properties == NULL) {
                 logmsg(TMJ_LOG_ERR, "Unable to unpack layer[%d]->properties", ret[idx].id);
@@ -979,7 +980,7 @@ Map* map_load_json(json_t* root, const char* path) {
             "backgroundcolor",
             &map->backgroundcolor,
             "class",
-            &map->class,
+            &map->class_,
             "orientation",
             &map->orientation,
             "renderorder",
