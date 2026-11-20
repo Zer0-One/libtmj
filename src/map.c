@@ -1145,6 +1145,12 @@ fail_map:
 }
 
 Map* tmj_map_loadf(const char* path, bool check_extension) {
+    if (path == NULL) {
+        logmsg(TMJ_LOG_ERR, "Unable to load map with null path");
+
+        return NULL;
+    }
+
     char* ext = strrchr(path, '.');
 
     if (check_extension) {

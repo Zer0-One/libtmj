@@ -621,6 +621,12 @@ void tilesets_free(Tileset* tilesets, size_t tileset_count) {
 }
 
 Tileset* tmj_tileset_loadf(const char* path, bool check_extension) {
+    if (path == NULL) {
+        logmsg(TMJ_LOG_DEBUG, "Unable to load tileset with null path");
+
+        return NULL;
+    }
+
     logmsg(TMJ_LOG_DEBUG, "Loading JSON tileset file '%s'", path);
 
     char* ext = strrchr(path, '.');
@@ -710,5 +716,9 @@ Tileset* tmj_tileset_load(const char* tileset) {
 }
 
 void tmj_tileset_free(Tileset* tileset) {
+    if (tileset == NULL) {
+        logmsg(TMJ_LOG_ERR, "Unable to free null tileset");
+    }
+
     tilesets_free(tileset, 1);
 }
