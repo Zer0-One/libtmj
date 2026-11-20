@@ -640,6 +640,8 @@ Tileset* tmj_tileset_loadf(const char* path, bool check_extension) {
     if (ret == NULL) {
         logmsg(TMJ_LOG_ERR, "Unable to load tileset[%s], the system is out of memory", path);
 
+        json_decref(root);
+
         return NULL;
     }
 
@@ -647,6 +649,7 @@ Tileset* tmj_tileset_loadf(const char* path, bool check_extension) {
         logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]", path);
 
         free(ret);
+        json_decref(root);
 
         return NULL;
     }
