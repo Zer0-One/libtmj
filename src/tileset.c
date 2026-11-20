@@ -31,8 +31,8 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
             &error,
             0,
             "{"
-            "s?s, s?s, s?s, s:s, s:s, s?s, s?s, s:s, s?s, s?s, s:s, s:s,"
-            "s:i, s?i, s:i, s:i, s:i, s:i, s:i, s:i, s:i,"
+            "s?s, s?s, s?s, s?s, s:s, s?s, s?s, s?s, s?s, s?s, s?s, s?s,"
+            "s:i, s?i, s?i, s?i, s:i, s:i, s:i, s:i, s:i,"
             "s?o, s?o, s?o, s?o, s?o, s?o"
             "}",
             "backgroundcolor",

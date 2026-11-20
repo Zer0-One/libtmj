@@ -417,6 +417,8 @@ typedef struct ObjectTemplate {
  * Loads the Tiled map from the file at the given path.
  *
  * The map object returned by this function must not be modified by the caller.
+ * The caller must check that layer_count is >0 before attempting to dereference
+ * the layers array.
  *
  * @param path A relative or absolute filesystem path.
  * @param check_extension If true, validates that the file extension equals ".tmj" or ".json".
@@ -432,6 +434,8 @@ Map* tmj_map_loadf(const char* path, bool check_extension);
  * Loads the Tiled map from the given JSON object string.
  *
  * The map object returned by this function must not be modified by the caller.
+ * The caller must check that layer_count is >0 before attempting to dereference
+ * the layers array.
  *
  * @param map A JSON string containing a Tiled map object.
  * @param name A name to use to reference this map in log messages.

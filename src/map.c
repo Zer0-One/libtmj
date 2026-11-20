@@ -294,15 +294,15 @@ Object* unpack_objects(json_t* objects) {
         json_t* polyline = NULL;
 
         // Unpack scalar values
-        int ellipse = 0, point = 0, visible = 0;
+        int ellipse = 0, point = 0, visible = 1;
         int unpk = json_unpack_ex(object,
                 &error,
                 0,
                 "{"
-                "s?b, s?b, s:b,"
-                "s:s, s?s, s?s,"
-                "s?i, s:i,"
-                "s:F, s:F, s:F, s:F, s:F,"
+                "s?b, s?b, s?b,"
+                "s?s, s?s, s?s,"
+                "s?i, s?i,"
+                "s?F, s?F, s?F, s:F, s:F,"
                 "s?o, s?o, s?o, s?o"
                 "}",
                 "ellipse",
@@ -666,8 +666,8 @@ Layer* unpack_layers(json_t* layers) {
                     &error,
                     0,
                     "{"
-                    "s:i, s:i,"
-                    "s:b, s:b,"
+                    "s?i, s?i,"
+                    "s?b, s?b,"
                     "s:s, s?s"
                     "}",
                     "imageheight",
@@ -1045,15 +1045,23 @@ Map* map_load_json(json_t* root, const char* path) {
     }
 
     // Unpack layers
-    map->layers = unpack_layers(layers);
-
-    if (map->layers == NULL) {
-        logmsg(TMJ_LOG_ERR, "Unable to unpack map[%s]->layers", path);
+    if (!json_is_array(layers)) {
+        logmsg(TMJ_LOG_ERR, "Unable to unpack map[%s]->layers, layers must be an array of Layers", path);
 
         goto fail_properties;
     }
 
-    map->layer_count = json_array_size(layers);
+    if (json_array_size(layers) > 0) {
+        map->layers = unpack_layers(layers);
+
+        if (map->layers == NULL) {
+            logmsg(TMJ_LOG_ERR, "Unable to unpack map[%s]->layers", path);
+
+            goto fail_properties;
+        }
+
+        map->layer_count = json_array_size(layers);
+    }
 
     // Unpack tilesets
     if (!json_is_array(tilesets)) {
