@@ -13,7 +13,7 @@ const unsigned int TMJ_VERSION_PATCH = LIBTMJ_VERSION_PATCH;
 const char* const TMJ_VERSION = LIBTMJ_VERSION;
 
 uint32_t* tmj_decode_layer(const char* data, const char* encoding, const char* compression, size_t* size) {
-    if (strcmp(encoding, "base64") != 0) {
+    if (encoding == NULL || strcmp(encoding, "base64") != 0) {
         logmsg(TMJ_LOG_ERR, "Layer data in csv format; decode it yourself");
 
         return NULL;
