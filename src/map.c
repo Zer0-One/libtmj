@@ -210,7 +210,12 @@ Text* unpack_text(json_t* text) {
         return NULL;
     }
 
-    int bold = 0, italic = 0, kerning = 0, strikeout = 0, underline = 0, wrap = 0;
+    int bold = 0, italic = 0, kerning = 1, strikeout = 0, underline = 0, wrap = 0;
+    ret->pixelsize = 16;
+    ret->color = "#000000";
+    ret->fontfamily = "sans-serif";
+    ret->halign = "left";
+    ret->valign = "top";
     int unpk = json_unpack_ex(text,
             &error,
             0,
@@ -612,6 +617,8 @@ Layer* unpack_layers(json_t* layers) {
 
         // Unpack scalar values
         int locked = 0, visible = 0;
+        ret[idx].parallaxx = 1.0;
+        ret[idx].parallaxy = 1.0;
         unpk = json_unpack_ex(layer,
                 &error,
                 0,
@@ -692,6 +699,9 @@ Layer* unpack_layers(json_t* layers) {
                 goto fail_layer;
             }
         } else if (strcmp(ret[idx].type, "tilelayer") == 0) {
+            ret[idx].encoding = "csv";
+            ret[idx].compression = "";
+            ret[idx].draworder = "topdown";
             unpk = json_unpack_ex(layer,
                     &error,
                     0,

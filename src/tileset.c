@@ -27,6 +27,9 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
     json_t* tiles = NULL;
 
     // Unpack scalar values
+    ret->fillmode = "stretch";
+    ret->objectalignment = "unspecified";
+    ret->tilerendersize = "tile";
     int unpk = json_unpack_ex(tileset,
             &error,
             0,
@@ -273,6 +276,7 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
             json_t* properties = NULL;
             json_t* terrain = NULL;
 
+            ret->tiles[idx].probability = 1.0;
             unpk = json_unpack_ex(tile,
                     &error,
                     0,
@@ -311,6 +315,14 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                     "terrain",
                     &terrain);
 
+            if (ret->tiles[idx].width == 0) {
+                ret->tiles[idx].width = ret->tiles[idx].imagewidth;
+            }
+
+            if (ret->tiles[idx].height == 0) {
+                ret->tiles[idx].height = ret->tiles[idx].imageheight;
+            }
+
             if (unpk == -1) {
                 logmsg(TMJ_LOG_ERR, "Unable to unpack tileset[%s]->tiles, %s at line %d column %d", ret->name, error.text, error.line, error.column);
 
@@ -334,6 +346,8 @@ int unpack_tileset(json_t* tileset, Tileset* ret) {
                 json_t* layer_properties = NULL;
 
                 int locked = 0, visible = 0;
+                ret->tiles[idx].objectgroup->parallaxx = 1.0;
+                ret->tiles[idx].objectgroup->parallaxy = 1.0;
                 unpk = json_unpack_ex(objectgroup,
                         &error,
                         0,
